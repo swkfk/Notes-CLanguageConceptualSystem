@@ -4,3 +4,7 @@ language = "zh-cn"
 multilingual = false
 src = "src"
 title = "《C 语言标准中的概念体系》笔记"
+
+[preprocessor.graphviz]
+command = "mdbook-graphviz"
+output-to-file = false
