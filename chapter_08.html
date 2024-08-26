@@ -3,8 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Page not found - 《C 语言标准中的概念体系》笔记</title>
-        <base href="/">
+        <title>理解对象的属性 - 《C 语言标准中的概念体系》笔记</title>
 
 
         <!-- Custom HTML head -->
@@ -91,7 +90,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="chapter_01.html"><strong aria-hidden="true">1.</strong> 序言</a></li><li class="chapter-item expanded "><a href="chapter_02.html"><strong aria-hidden="true">2.</strong> 初识对象</a></li><li class="chapter-item expanded "><a href="chapter_03.html"><strong aria-hidden="true">3.</strong> 对象类型：算术类型</a></li><li class="chapter-item expanded "><a href="chapter_04.html"><strong aria-hidden="true">4.</strong> 派生类型：数组类型</a></li><li class="chapter-item expanded "><a href="chapter_05.html"><strong aria-hidden="true">5.</strong> 派生类型：指针类型</a></li><li class="chapter-item expanded "><a href="chapter_06.html"><strong aria-hidden="true">6.</strong> 对象类型：限定类型</a></li><li class="chapter-item expanded "><a href="chapter_07.html"><strong aria-hidden="true">7.</strong> 分配对象：对象声明</a></li><li class="chapter-item expanded "><a href="chapter_08.html"><strong aria-hidden="true">8.</strong> 理解对象的属性</a></li><li class="chapter-item expanded "><a href="chapter_09.html"><strong aria-hidden="true">9.</strong> 分配对象：字符串字面量</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="chapter_01.html"><strong aria-hidden="true">1.</strong> 序言</a></li><li class="chapter-item expanded "><a href="chapter_02.html"><strong aria-hidden="true">2.</strong> 初识对象</a></li><li class="chapter-item expanded "><a href="chapter_03.html"><strong aria-hidden="true">3.</strong> 对象类型：算术类型</a></li><li class="chapter-item expanded "><a href="chapter_04.html"><strong aria-hidden="true">4.</strong> 派生类型：数组类型</a></li><li class="chapter-item expanded "><a href="chapter_05.html"><strong aria-hidden="true">5.</strong> 派生类型：指针类型</a></li><li class="chapter-item expanded "><a href="chapter_06.html"><strong aria-hidden="true">6.</strong> 对象类型：限定类型</a></li><li class="chapter-item expanded "><a href="chapter_07.html"><strong aria-hidden="true">7.</strong> 分配对象：对象声明</a></li><li class="chapter-item expanded "><a href="chapter_08.html" class="active"><strong aria-hidden="true">8.</strong> 理解对象的属性</a></li><li class="chapter-item expanded "><a href="chapter_09.html"><strong aria-hidden="true">9.</strong> 分配对象：字符串字面量</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -176,14 +175,63 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="document-not-found-404"><a class="header" href="#document-not-found-404">Document not found (404)</a></h1>
-<p>This URL is invalid, sorry. Please use the navigation bar or search to continue.</p>
+                        <h1 id="理解对象的属性"><a class="header" href="#理解对象的属性">理解对象的属性</a></h1>
+<p><a href="https://www.bilibili.com/video/BV1kfYKeYEbg">@Bili: BV1kfYKeYEbg</a></p>
+<ul>
+<li><strong>对象类型</strong>，是对象最重要的属性！</li>
+<li><strong>对象名称</strong>，有名称的对象，称为<strong>具名对象（Named Object）</strong>，反之则称为<strong>匿名对象（Unnamed Object）</strong>。</li>
+<li><strong>对象大小</strong>，通过 <code>sizeof(T)</code> 获得，为对象连续占据字节的个数。</li>
+<li><strong>对象地址</strong>，由系统确定。</li>
+<li><strong>对齐要求</strong>，对象地址需要满足对齐要求，缺省对齐要求可以由 <code>alignof(T)</code> 获得。</li>
+<li><strong>对象值</strong>，对于声明来说，完整类型的 <code>initializer</code> 是对象值。</li>
+<li><strong>对象表示</strong>，内存中的 0/1 串。</li>
+</ul>
+<blockquote>
+<p>通过对象值可以设置对象表示，对象表示也反映了对象值。</p>
+<p>下表中，三个对象拥有<strong>相同的对象表示</strong>。</p>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center">声明</th><th style="text-align: center">对象值</th><th style="text-align: center">对象类型</th></tr></thead><tbody>
+<tr><td style="text-align: center"><code>const int a = 1;</code></td><td style="text-align: center"><code>1</code></td><td style="text-align: center"><code>const int</code></td></tr>
+<tr><td style="text-align: center"><code>int b[1] = {1};</code></td><td style="text-align: center"><code>{1}</code></td><td style="text-align: center"><code>int[1]</code></td></tr>
+<tr><td style="text-align: center"><code>int c[1][1] = {{1}}</code></td><td style="text-align: center"><code>{{1}}</code></td><td style="text-align: center"><code>int[1][1]</code></td></tr>
+</tbody></table>
+</div></blockquote>
+<h2 id="对象的表示值与表示值类型"><a class="header" href="#对象的表示值与表示值类型">对象的表示值与表示值类型</a></h2>
+<blockquote>
+<p>表示值与表示值类型不是<strong>标准术语</strong>，但有助于理解<strong>表达式求值</strong>和<strong>右值</strong>。</p>
+</blockquote>
+<p>对于一个对象，可以观察出来一个表示值，对象的<strong>表示值</strong>与<strong>表示值类型</strong>表述为：</p>
+<pre><code>&lt;Value, Value Type&gt;
+</code></pre>
+<p>获取规则如下：</p>
+<ol>
+<li>非数组对象类型：<code>&lt;Object Value, typeof_unqual(Object Type)&gt;</code></li>
+<li>数组对象类型：<code>&lt;第一个元素对象的地址, 元素对应的指针类型&gt;</code></li>
+</ol>
+<blockquote>
+<p>假设数组 <code>int c[1][1] = {{1}};</code> 的对象地址为 <code>0x00FFFF00</code>，则对象 <code>c</code>：<code>&lt;0x00FFFF00, int(*)[1]&gt;</code>，对象值为 <code>{{1}}</code>。</p>
+</blockquote>
+<h2 id="对象七元组模型"><a class="header" href="#对象七元组模型">对象七元组模型</a></h2>
+<pre><code>Object = {
+    Address,  // 由系统分配，一旦确定，无法修改
+    Object_Type,
+    Name,  // 可以有匿名对象
+    Size,
+    Value, Value_Type,  // 它们的取值根据对象类型确定
+    Alignment,  // 由对象类型决定，也可由程序员更改
+}
+</code></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="chapter_07.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
 
+                            <a rel="next prefetch" href="chapter_09.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
 
                         <div style="clear: both"></div>
                     </nav>
@@ -191,7 +239,13 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="chapter_07.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
 
+                    <a rel="next prefetch" href="chapter_09.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
             </nav>
 
         </div>

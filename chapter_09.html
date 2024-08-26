@@ -3,8 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Page not found - 《C 语言标准中的概念体系》笔记</title>
-        <base href="/">
+        <title>分配对象：字符串字面量 - 《C 语言标准中的概念体系》笔记</title>
 
 
         <!-- Custom HTML head -->
@@ -91,7 +90,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="chapter_01.html"><strong aria-hidden="true">1.</strong> 序言</a></li><li class="chapter-item expanded "><a href="chapter_02.html"><strong aria-hidden="true">2.</strong> 初识对象</a></li><li class="chapter-item expanded "><a href="chapter_03.html"><strong aria-hidden="true">3.</strong> 对象类型：算术类型</a></li><li class="chapter-item expanded "><a href="chapter_04.html"><strong aria-hidden="true">4.</strong> 派生类型：数组类型</a></li><li class="chapter-item expanded "><a href="chapter_05.html"><strong aria-hidden="true">5.</strong> 派生类型：指针类型</a></li><li class="chapter-item expanded "><a href="chapter_06.html"><strong aria-hidden="true">6.</strong> 对象类型：限定类型</a></li><li class="chapter-item expanded "><a href="chapter_07.html"><strong aria-hidden="true">7.</strong> 分配对象：对象声明</a></li><li class="chapter-item expanded "><a href="chapter_08.html"><strong aria-hidden="true">8.</strong> 理解对象的属性</a></li><li class="chapter-item expanded "><a href="chapter_09.html"><strong aria-hidden="true">9.</strong> 分配对象：字符串字面量</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="chapter_01.html"><strong aria-hidden="true">1.</strong> 序言</a></li><li class="chapter-item expanded "><a href="chapter_02.html"><strong aria-hidden="true">2.</strong> 初识对象</a></li><li class="chapter-item expanded "><a href="chapter_03.html"><strong aria-hidden="true">3.</strong> 对象类型：算术类型</a></li><li class="chapter-item expanded "><a href="chapter_04.html"><strong aria-hidden="true">4.</strong> 派生类型：数组类型</a></li><li class="chapter-item expanded "><a href="chapter_05.html"><strong aria-hidden="true">5.</strong> 派生类型：指针类型</a></li><li class="chapter-item expanded "><a href="chapter_06.html"><strong aria-hidden="true">6.</strong> 对象类型：限定类型</a></li><li class="chapter-item expanded "><a href="chapter_07.html"><strong aria-hidden="true">7.</strong> 分配对象：对象声明</a></li><li class="chapter-item expanded "><a href="chapter_08.html"><strong aria-hidden="true">8.</strong> 理解对象的属性</a></li><li class="chapter-item expanded "><a href="chapter_09.html" class="active"><strong aria-hidden="true">9.</strong> 分配对象：字符串字面量</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -176,13 +175,77 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="document-not-found-404"><a class="header" href="#document-not-found-404">Document not found (404)</a></h1>
-<p>This URL is invalid, sorry. Please use the navigation bar or search to continue.</p>
+                        <h1 id="分配对象字符串字面量"><a class="header" href="#分配对象字符串字面量">分配对象：字符串字面量</a></h1>
+<p><a href="https://www.bilibili.com/video/BV1eJePejErv">@Bili: BV1eJePejErv</a></p>
+<h2 id="什么是-string-literal"><a class="header" href="#什么是-string-literal">什么是 String Literal？</a></h2>
+<p><strong>String Literal</strong> 由<strong>编码前缀</strong>和<strong>双引号引导的字符序列</strong>构成：</p>
+<p><em>encoding-prefix</em> <strong>"</strong> <em>s-char-sequence</em> <strong>"</strong></p>
+<h3 id="字符序列中的字符"><a class="header" href="#字符序列中的字符">字符序列中的字符</a></h3>
+<ol>
+<li>可以包含所有源字符集中的字符，除了 <strong><code>"</code></strong>，<strong><code>\</code></strong> 与<strong>实际的回车</strong>。</li>
+<li>可以包含由 <code>\</code> 引导的转义字符</li>
+</ol>
+<h3 id="编码前缀"><a class="header" href="#编码前缀">编码前缀</a></h3>
+<p>一共有 5 种：无编码、<code>u8</code>、<code>u</code>、<code>U</code> 与 <code>L</code>。</p>
+<h4 id="hello-分配对象"><a class="header" href="#hello-分配对象">"Hello" 分配对象</a></h4>
+<p><strong>匿名对象</strong>，分别用 <code>'H', 'e', 'l', 'l', 'o', '\0'</code> 初始化 <code>char</code> 数组中的每个元素。</p>
+<blockquote>
+<p><strong>对象存储周期（Storage Duration）</strong>，C 语言一共定义了 4 种，决定对象的有效期：</p>
+<ul>
+<li><strong><code>static</code></strong>：有效期覆盖整个程序运行期间，程序运行前会被初始化（如果未显式初始化的话）。</li>
+<li><strong><code>automatic</code></strong></li>
+<li><strong><code>allocated</code></strong></li>
+<li><strong><code>thread</code></strong></li>
+</ul>
+<pre><code class="language-c">int a;  // duration: static，被初始化为缺省的 0
+int main(int argc, char* argv[]) {
+    int b;  // storage duration: automatic，没有显式初始化
+    return 0;
+}
+</code></pre>
+<blockquote>
+<p><strong>C 语言没有全局、局部变量的概念</strong>。</p>
+</blockquote>
+</blockquote>
+<blockquote>
+<p><strong>所有 String Literal 都具有静态存储周期</strong>。</p>
+</blockquote>
+<h4 id="另外四种编码前缀"><a class="header" href="#另外四种编码前缀">另外四种编码前缀</a></h4>
+<p>构成字符数组的元素对象类型：</p>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center">编码前缀</th><th style="text-align: center">元素字符对象类型</th></tr></thead><tbody>
+<tr><td style="text-align: center"><code>u8</code></td><td style="text-align: center"><code>char8_t</code></td></tr>
+<tr><td style="text-align: center"><code>u</code></td><td style="text-align: center"><code>char16_t</code></td></tr>
+<tr><td style="text-align: center"><code>U</code></td><td style="text-align: center"><code>char32_t</code></td></tr>
+<tr><td style="text-align: center"><code>L</code></td><td style="text-align: center"><code>wchar_t</code></td></tr>
+</tbody></table>
+</div>
+<h2 id="多个对象表示一样的-string-literal-分配对象"><a class="header" href="#多个对象表示一样的-string-literal-分配对象">多个对象表示一样的 String Literal 分配对象</a></h2>
+<pre><code class="language-c">int main(int argc, char* argv[]) {
+    "hello";
+    "hello";
+    return 0;
+}
+</code></pre>
+<p>第二个 <code>"hello"</code> 是否分配另一个对象值一样的字符数组<strong>取决于编译器的实现</strong>。</p>
+<pre><code class="language-c">int main(int argc, char* argv[]) {
+    "hello";
+    L"hello";
+    return 0;
+}
+</code></pre>
+<p>上述两个，<strong>对象表示不一样</strong>，因此会分配两个对象。</p>
+<h2 id="string-与-string-literal"><a class="header" href="#string-与-string-literal">String 与 String Literal</a></h2>
+<p>若双引号中不<strong>显式</strong>包含 <code>\0</code> 字符，则这样的 String Literal 被称为 <strong>String</strong>.</p>
+<h2 id="多个相邻-string-literal-合并在一起"><a class="header" href="#多个相邻-string-literal-合并在一起">多个相邻 String Literal 合并在一起</a></h2>
+<p><code>"A" " " "B"</code> 会被合并为 <code>"A B"</code>，要求各个 String Literal 的编码前缀一致。</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="chapter_08.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
 
 
                         <div style="clear: both"></div>
@@ -191,6 +254,9 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="chapter_08.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
 
             </nav>
 

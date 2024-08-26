@@ -91,7 +91,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="chapter_01.html"><strong aria-hidden="true">1.</strong> 序言</a></li><li class="chapter-item expanded "><a href="chapter_02.html"><strong aria-hidden="true">2.</strong> 初识对象</a></li><li class="chapter-item expanded "><a href="chapter_03.html"><strong aria-hidden="true">3.</strong> 对象类型：算术类型</a></li><li class="chapter-item expanded "><a href="chapter_04.html"><strong aria-hidden="true">4.</strong> 派生类型：数组类型</a></li><li class="chapter-item expanded "><a href="chapter_05.html"><strong aria-hidden="true">5.</strong> 派生类型：指针类型</a></li><li class="chapter-item expanded "><a href="chapter_06.html"><strong aria-hidden="true">6.</strong> 对象类型：限定类型</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="chapter_01.html"><strong aria-hidden="true">1.</strong> 序言</a></li><li class="chapter-item expanded "><a href="chapter_02.html"><strong aria-hidden="true">2.</strong> 初识对象</a></li><li class="chapter-item expanded "><a href="chapter_03.html"><strong aria-hidden="true">3.</strong> 对象类型：算术类型</a></li><li class="chapter-item expanded "><a href="chapter_04.html"><strong aria-hidden="true">4.</strong> 派生类型：数组类型</a></li><li class="chapter-item expanded "><a href="chapter_05.html"><strong aria-hidden="true">5.</strong> 派生类型：指针类型</a></li><li class="chapter-item expanded "><a href="chapter_06.html"><strong aria-hidden="true">6.</strong> 对象类型：限定类型</a></li><li class="chapter-item expanded "><a href="chapter_07.html"><strong aria-hidden="true">7.</strong> 分配对象：对象声明</a></li><li class="chapter-item expanded "><a href="chapter_08.html"><strong aria-hidden="true">8.</strong> 理解对象的属性</a></li><li class="chapter-item expanded "><a href="chapter_09.html"><strong aria-hidden="true">9.</strong> 分配对象：字符串字面量</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -570,6 +570,193 @@ int *const ipc = &amp;num; // const qualify `int *`
 <h2 id="多个限定符的语义"><a class="header" href="#多个限定符的语义">多个限定符的语义</a></h2>
 <p><code>const volatile int</code> 与 <code>volatile const int</code> 等价。</p>
 <p>C23 提供新关键词 <code>typeof_unqual(T)</code> 获取 <code>T</code> 类型的非限定类型，<code>typeof_unqual(const volatile int)</code> 等价于 <code>int</code>。</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="分配对象对象声明"><a class="header" href="#分配对象对象声明">分配对象：对象声明</a></h1>
+<p><a href="https://www.bilibili.com/video/BV1UKiLezEKJ">@Bili: BV1UKiLezEKJ</a></p>
+<h2 id="分配一个对象的方法"><a class="header" href="#分配一个对象的方法">分配一个对象的方法</a></h2>
+<ul>
+<li>对象声明</li>
+<li>String Literal（字符串字面量）</li>
+<li>Compound Literal（复合字面量）</li>
+<li>内存管理函数</li>
+</ul>
+<h2 id="对象声明的基本语法形式"><a class="header" href="#对象声明的基本语法形式">对象声明的基本语法形式</a></h2>
+<pre><code class="language-c">T O = initializer;
+</code></pre>
+<p>上述语句进行了三件事：</p>
+<ol>
+<li>分配了一个 <code>T</code> 类型的对象；</li>
+<li>对象的名字叫做 <code>O</code>；</li>
+<li>用 <code>initializer</code> 初始化这个对象的对象表示（也可以没有 <code>initializer</code>）。</li>
+</ol>
+<p>这里的 <code>T</code> 需要<strong>作为整体对待</strong>，否则在使用 <code>T</code>，<code>T[N]</code> 与 <code>T*</code> 时，<code>O</code> 的位置会有所区别，不再赘述。</p>
+<h3 id="一次声明多个对象"><a class="header" href="#一次声明多个对象">一次声明多个对象</a></h3>
+<p>基本形式为：</p>
+<pre><code class="language-c">T O1 = initializer1, O2 = initializer2, ..., On = initializern;
+</code></pre>
+<p>对于数组类型 <code>T[N]</code>，有下面两种写法：</p>
+<pre><code class="language-c">T O1[N] = initializer1, O2[N] = initializer2, ..., On[N] = initializern;
+typeof(T[N]) O1 = initializer1, O2 = initializer2, ..., On = initializern;
+</code></pre>
+<p>对于指针类型 <code>T*</code>，有下面两种写法：</p>
+<pre><code class="language-c">T *O1 = initializer1, *O2 = initializer2, ..., *On = initializern;
+typeof(T*) O1 = initializer1, O2 = initializer2, ..., On = initializern;
+</code></pre>
+<h2 id="标量类型与非标量类型"><a class="header" href="#标量类型与非标量类型">标量类型与非标量类型</a></h2>
+<p>算数类型与指针类型（以及 <code>nullptr_t</code> 类型）统称为<strong>标量类型（Scalar Type）</strong>。</p>
+<h3 id="标量类型对象的-initializer"><a class="header" href="#标量类型对象的-initializer">标量类型对象的 initializer</a></h3>
+<p>对于标量类型 <code>T</code>，以及与之关联的限定类型 <code>Q T</code>，initializer 有下列两种形式：</p>
+<ul>
+<li><code>{}</code>，空初始化列表（从 C23 开始）</li>
+<li><strong>除逗号表达式外</strong>的任意表达式 <code>exp</code> 或 <code>{exp}</code></li>
+</ul>
+<pre><code class="language-c">// chapter_07/scalar_init.c:main
+#if defined(__STDC_VERSION__) &amp;&amp; __STDC_VERSION__ &gt;= 202311L
+const int c_zero = {};
+#else
+const int c_zero = 0;
+#endif
+
+int one = 1;
+const int c_one = {1};
+int three = {1 + 2};
+const int c_three = 1 + 2;
+</code></pre>
+<p><code>{}</code> 意味着将该对象的值设置为该类型的<strong>缺省值</strong>。</p>
+<ul>
+<li>整数对象的缺省值为 <code>+0</code> 或者无符号的 <code>0</code>；</li>
+<li>十进制浮点数对象的缺省值为 <code>+0</code>，其他浮点数的缺省值为 <code>+0</code>，或者无符号的 <code>0</code>；</li>
+<li>指针类型的缺省值为空指针。</li>
+</ul>
+<p>表达式意味着使用该<strong>表达式求值后的右值</strong>来初始化对象表示。</p>
+<h3 id="数组类型-tn-对象的-initializer"><a class="header" href="#数组类型-tn-对象的-initializer">数组类型 <code>T[N]</code> 对象的 initializer</a></h3>
+<p>同样有两种形式：</p>
+<ul>
+<li><code>{}</code>，空初始化列表</li>
+<li><code>{sub-initializer_1, sub-initializer_2, ..., sub-initializer_n}</code></li>
+</ul>
+<p>每一个 <code>sub-initializer_i</code> 用来初始化数组中的一个<strong>元素对象</strong>，如果元素对象依然是一个数组对象，则 <code>sub-initializer_i</code> 则再使用数组对象初始化的形式。</p>
+<blockquote>
+<p>若 <code>N</code> 不存在时，不可以使用空初始化列表，<strong>子初始化列表的个数</strong>就是数组的元素个数。</p>
+<p>若数组是<strong>变长数组</strong>时，只能用 <code>{}</code> 进行初始化。</p>
+</blockquote>
+<p>对于普通数组，使用 <code>{}</code> 初始化，元素对象会被<strong>递归地</strong>设置成缺省值。若 \(n &lt; N\)，则剩下的对象被设置成缺省值。</p>
+<pre><code class="language-c">// chapter_07/array_init.c
+int a1[2][3] = {{1, 2, 3}, {4, 5, 6}};
+int a2[2][3] = {{1, 2, 3}};
+int a3[2][3] = {{1, 2}, {3, 4, 5}};
+// 因为内存是一维的，最后都是标量对象（及限定类型）依次排列开
+int a4[2][3] = {1, 2, 3, 4};
+</code></pre>
+<h2 id="不确定的对象表示"><a class="header" href="#不确定的对象表示">不确定的对象表示</a></h2>
+<p>当没有 <code>initializer</code> 时，对象其实也有确定的对象值，但并不是程序员设定的，因此此时的对象表示被称为 "<strong>indeterminate representation</strong>"。</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="理解对象的属性"><a class="header" href="#理解对象的属性">理解对象的属性</a></h1>
+<p><a href="https://www.bilibili.com/video/BV1kfYKeYEbg">@Bili: BV1kfYKeYEbg</a></p>
+<ul>
+<li><strong>对象类型</strong>，是对象最重要的属性！</li>
+<li><strong>对象名称</strong>，有名称的对象，称为<strong>具名对象（Named Object）</strong>，反之则称为<strong>匿名对象（Unnamed Object）</strong>。</li>
+<li><strong>对象大小</strong>，通过 <code>sizeof(T)</code> 获得，为对象连续占据字节的个数。</li>
+<li><strong>对象地址</strong>，由系统确定。</li>
+<li><strong>对齐要求</strong>，对象地址需要满足对齐要求，缺省对齐要求可以由 <code>alignof(T)</code> 获得。</li>
+<li><strong>对象值</strong>，对于声明来说，完整类型的 <code>initializer</code> 是对象值。</li>
+<li><strong>对象表示</strong>，内存中的 0/1 串。</li>
+</ul>
+<blockquote>
+<p>通过对象值可以设置对象表示，对象表示也反映了对象值。</p>
+<p>下表中，三个对象拥有<strong>相同的对象表示</strong>。</p>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center">声明</th><th style="text-align: center">对象值</th><th style="text-align: center">对象类型</th></tr></thead><tbody>
+<tr><td style="text-align: center"><code>const int a = 1;</code></td><td style="text-align: center"><code>1</code></td><td style="text-align: center"><code>const int</code></td></tr>
+<tr><td style="text-align: center"><code>int b[1] = {1};</code></td><td style="text-align: center"><code>{1}</code></td><td style="text-align: center"><code>int[1]</code></td></tr>
+<tr><td style="text-align: center"><code>int c[1][1] = {{1}}</code></td><td style="text-align: center"><code>{{1}}</code></td><td style="text-align: center"><code>int[1][1]</code></td></tr>
+</tbody></table>
+</div></blockquote>
+<h2 id="对象的表示值与表示值类型"><a class="header" href="#对象的表示值与表示值类型">对象的表示值与表示值类型</a></h2>
+<blockquote>
+<p>表示值与表示值类型不是<strong>标准术语</strong>，但有助于理解<strong>表达式求值</strong>和<strong>右值</strong>。</p>
+</blockquote>
+<p>对于一个对象，可以观察出来一个表示值，对象的<strong>表示值</strong>与<strong>表示值类型</strong>表述为：</p>
+<pre><code>&lt;Value, Value Type&gt;
+</code></pre>
+<p>获取规则如下：</p>
+<ol>
+<li>非数组对象类型：<code>&lt;Object Value, typeof_unqual(Object Type)&gt;</code></li>
+<li>数组对象类型：<code>&lt;第一个元素对象的地址, 元素对应的指针类型&gt;</code></li>
+</ol>
+<blockquote>
+<p>假设数组 <code>int c[1][1] = {{1}};</code> 的对象地址为 <code>0x00FFFF00</code>，则对象 <code>c</code>：<code>&lt;0x00FFFF00, int(*)[1]&gt;</code>，对象值为 <code>{{1}}</code>。</p>
+</blockquote>
+<h2 id="对象七元组模型"><a class="header" href="#对象七元组模型">对象七元组模型</a></h2>
+<pre><code>Object = {
+    Address,  // 由系统分配，一旦确定，无法修改
+    Object_Type,
+    Name,  // 可以有匿名对象
+    Size,
+    Value, Value_Type,  // 它们的取值根据对象类型确定
+    Alignment,  // 由对象类型决定，也可由程序员更改
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="分配对象字符串字面量"><a class="header" href="#分配对象字符串字面量">分配对象：字符串字面量</a></h1>
+<p><a href="https://www.bilibili.com/video/BV1eJePejErv">@Bili: BV1eJePejErv</a></p>
+<h2 id="什么是-string-literal"><a class="header" href="#什么是-string-literal">什么是 String Literal？</a></h2>
+<p><strong>String Literal</strong> 由<strong>编码前缀</strong>和<strong>双引号引导的字符序列</strong>构成：</p>
+<p><em>encoding-prefix</em> <strong>"</strong> <em>s-char-sequence</em> <strong>"</strong></p>
+<h3 id="字符序列中的字符"><a class="header" href="#字符序列中的字符">字符序列中的字符</a></h3>
+<ol>
+<li>可以包含所有源字符集中的字符，除了 <strong><code>"</code></strong>，<strong><code>\</code></strong> 与<strong>实际的回车</strong>。</li>
+<li>可以包含由 <code>\</code> 引导的转义字符</li>
+</ol>
+<h3 id="编码前缀"><a class="header" href="#编码前缀">编码前缀</a></h3>
+<p>一共有 5 种：无编码、<code>u8</code>、<code>u</code>、<code>U</code> 与 <code>L</code>。</p>
+<h4 id="hello-分配对象"><a class="header" href="#hello-分配对象">"Hello" 分配对象</a></h4>
+<p><strong>匿名对象</strong>，分别用 <code>'H', 'e', 'l', 'l', 'o', '\0'</code> 初始化 <code>char</code> 数组中的每个元素。</p>
+<blockquote>
+<p><strong>对象存储周期（Storage Duration）</strong>，C 语言一共定义了 4 种，决定对象的有效期：</p>
+<ul>
+<li><strong><code>static</code></strong>：有效期覆盖整个程序运行期间，程序运行前会被初始化（如果未显式初始化的话）。</li>
+<li><strong><code>automatic</code></strong></li>
+<li><strong><code>allocated</code></strong></li>
+<li><strong><code>thread</code></strong></li>
+</ul>
+<pre><code class="language-c">int a;  // duration: static，被初始化为缺省的 0
+int main(int argc, char* argv[]) {
+    int b;  // storage duration: automatic，没有显式初始化
+    return 0;
+}
+</code></pre>
+<blockquote>
+<p><strong>C 语言没有全局、局部变量的概念</strong>。</p>
+</blockquote>
+</blockquote>
+<blockquote>
+<p><strong>所有 String Literal 都具有静态存储周期</strong>。</p>
+</blockquote>
+<h4 id="另外四种编码前缀"><a class="header" href="#另外四种编码前缀">另外四种编码前缀</a></h4>
+<p>构成字符数组的元素对象类型：</p>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center">编码前缀</th><th style="text-align: center">元素字符对象类型</th></tr></thead><tbody>
+<tr><td style="text-align: center"><code>u8</code></td><td style="text-align: center"><code>char8_t</code></td></tr>
+<tr><td style="text-align: center"><code>u</code></td><td style="text-align: center"><code>char16_t</code></td></tr>
+<tr><td style="text-align: center"><code>U</code></td><td style="text-align: center"><code>char32_t</code></td></tr>
+<tr><td style="text-align: center"><code>L</code></td><td style="text-align: center"><code>wchar_t</code></td></tr>
+</tbody></table>
+</div>
+<h2 id="多个对象表示一样的-string-literal-分配对象"><a class="header" href="#多个对象表示一样的-string-literal-分配对象">多个对象表示一样的 String Literal 分配对象</a></h2>
+<pre><code class="language-c">int main(int argc, char* argv[]) {
+    "hello";
+    "hello";
+    return 0;
+}
+</code></pre>
+<p>第二个 <code>"hello"</code> 是否分配另一个对象值一样的字符数组<strong>取决于编译器的实现</strong>。</p>
+<pre><code class="language-c">int main(int argc, char* argv[]) {
+    "hello";
+    L"hello";
+    return 0;
+}
+</code></pre>
+<p>上述两个，<strong>对象表示不一样</strong>，因此会分配两个对象。</p>
+<h2 id="string-与-string-literal"><a class="header" href="#string-与-string-literal">String 与 String Literal</a></h2>
+<p>若双引号中不<strong>显式</strong>包含 <code>\0</code> 字符，则这样的 String Literal 被称为 <strong>String</strong>.</p>
+<h2 id="多个相邻-string-literal-合并在一起"><a class="header" href="#多个相邻-string-literal-合并在一起">多个相邻 String Literal 合并在一起</a></h2>
+<p><code>"A" " " "B"</code> 会被合并为 <code>"A B"</code>，要求各个 String Literal 的编码前缀一致。</p>
 
                     </main>
 
