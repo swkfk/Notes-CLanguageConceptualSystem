@@ -1,0 +1,351 @@
+<!DOCTYPE HTML>
+<html lang="zh-cn" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>序言 - 《C 语言标准中的概念体系》笔记</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="chapter_01.html" class="active"><strong aria-hidden="true">1.</strong> 序言</a></li><li class="chapter-item expanded "><a href="chapter_02.html"><strong aria-hidden="true">2.</strong> 初识对象</a></li><li class="chapter-item expanded "><a href="chapter_03.html"><strong aria-hidden="true">3.</strong> 对象类型：算术类型</a></li><li class="chapter-item expanded "><a href="chapter_04.html"><strong aria-hidden="true">4.</strong> 派生类型：数组类型</a></li><li class="chapter-item expanded "><a href="chapter_05.html"><strong aria-hidden="true">5.</strong> 派生类型：指针类型</a></li><li class="chapter-item expanded "><a href="chapter_06.html"><strong aria-hidden="true">6.</strong> 对象类型：限定类型</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">《C 语言标准中的概念体系》笔记</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="序言"><a class="header" href="#序言">序言</a></h1>
+<p><a href="https://www.bilibili.com/video/BV1HT421Y7H3">@Bili: BV1HT421Y7H3</a></p>
+<h2 id="c-语言知识的三个层次"><a class="header" href="#c-语言知识的三个层次">C 语言知识的三个层次</a></h2>
+<ul>
+<li><strong>语法类</strong>知识
+<ul>
+<li>书写语法规范的代码（通过编译）</li>
+</ul>
+</li>
+<li><strong>概念类</strong>知识
+<ul>
+<li>正确理解代码的含义（承上启下）</li>
+</ul>
+</li>
+<li><strong>策略类</strong>知识
+<ul>
+<li>高效完成软件开发</li>
+</ul>
+</li>
+</ul>
+<h2 id="辨析一标准中并没有变量这个概念"><a class="header" href="#辨析一标准中并没有变量这个概念">辨析一：标准中并没有“变量”这个概念？！</a></h2>
+<h3 id="1-所谓的变量从何而来"><a class="header" href="#1-所谓的变量从何而来">1. 所谓的“变量”从何而来</a></h3>
+<p>事实上，"<strong>Variable</strong>" 这个单词并没有作为术语出现在标准中，但是教材们依然将诸如 <code>int a = 0;</code> 中的 <code>a</code> 称为“变量”，这里面的逻辑是，<code>a</code> 的值<strong>可变</strong>！</p>
+<h3 id="2-const-int-b--0-是什么东西"><a class="header" href="#2-const-int-b--0-是什么东西">2. <code>const int b = 0;</code> 是什么东西</a></h3>
+<p>现在，<code>b</code> 的值不能变了，那可以将它称为<strong>常量</strong>（constant）吗？不能，因为 C 标准中对于“常量”有另外的明确的定义。</p>
+<p>此外，教材们本身并未统一意见，因此这种叫法是有问题的。</p>
+<h3 id="3-再加上-volatile-呢"><a class="header" href="#3-再加上-volatile-呢">3. 再加上 <code>volatile</code> 呢</a></h3>
+<p>对于 <code>const volatile int c = 0;</code>。它被 <code>const</code> 修饰，意味着不能被程序员修改；被 <code>volatile</code> 修饰，意味着会被“意想不到”的方式修改。</p>
+<blockquote>
+<p>笔者注：<code>volatile</code> 关键词用于标记变量可能被 "unknown to the implementation" 的方式修改，因此，对于被这个关键词修饰的”<del>变量</del>“，每次读取时都应该从内存中取值，从而阻止了编译优化的进行。</p>
+</blockquote>
+<p>那么问题来了，它到底会不会变呢？</p>
+<h2 id="辨析二常量还是常量表达式这是一个问题"><a class="header" href="#辨析二常量还是常量表达式这是一个问题">辨析二：常量还是常量表达式，这是一个问题</a></h2>
+<h3 id="1-常量与常量表达式有显式的差别"><a class="header" href="#1-常量与常量表达式有显式的差别">1. 常量与常量表达式有显式的差别</a></h3>
+<p>有四个例子：</p>
+<ul>
+<li><code>10</code>：是<strong>整数常量</strong></li>
+<li><code>+10</code>：不是整数常量，而是<strong>整数常量表达式</strong></li>
+<li><code>(int) (10.0)</code>：不是整数常量，而是<strong>整数常量表达式</strong></li>
+<li><code>(int) (+10.0)</code>：<strong>不是</strong>整数常量，<strong>也不是</strong>整数常量表达式</li>
+</ul>
+<p>再来一个足够具有颠覆性的实例：</p>
+<pre><code class="language-c">// chapter_01/const_expr.c
+int x[5][(int) (10.0)];
+int y[5][(int) (+10.0)];
+int i = 0, j = 0;
+
+sizeof(x[i++]);
+printf("i: %d\n", i);
+
+sizeof(y[j++]);
+printf("j: %d\n", j);
+</code></pre>
+<p>运行结果：</p>
+<pre><code class="language-text">i: 0
+j: 1
+</code></pre>
+<p>上述例子综合涉及了 C 语言标准体系里的诸多概念。</p>
+<h3 id="2-数组带来了更多的混乱"><a class="header" href="#2-数组带来了更多的混乱">2. 数组带来了更多的混乱</a></h3>
+<p><code>int d[10] = {0};</code>，应该如何表述 <code>d</code> 呢？</p>
+<p><code>d</code> 不是常量，<strong>也不是首元素的地址</strong>！</p>
+<p>对于下面的例子：</p>
+<pre><code class="language-c">int d[10] = {0};
+int main() {
+    int e[10] = {0};
+    return 0;
+}
+</code></pre>
+<p><code>d</code> 不是常量，但是“<strong>地址常量表达式</strong>”；<code>e</code> 既不是常量，<strong>也不是</strong>地址常量表达式。</p>
+<h2 id="现有学习资料的不足相较于标准的概念体系"><a class="header" href="#现有学习资料的不足相较于标准的概念体系">现有学习资料的不足（相较于标准的概念体系）</a></h2>
+<h3 id="1-核心概念缺失"><a class="header" href="#1-核心概念缺失">1. 核心概念缺失</a></h3>
+<p>对象、<code>lvalue</code>、<code>rvalue</code> 等概念介绍缺失或不详细。</p>
+<h3 id="2-部分概念混淆有误"><a class="header" href="#2-部分概念混淆有误">2. 部分概念混淆有误</a></h3>
+<p>何为变量、常量？常量与常量表达式如何区分？</p>
+<p>字符串常量？数组名就是首元素地址吗？</p>
+<h3 id="3-存在很多自创概念"><a class="header" href="#3-存在很多自创概念">3. 存在很多自创概念</a></h3>
+<p>行指针、列指针、数组指针、指针数组、多级指针、模拟引用传递等。</p>
+<p>行列是二维视角，但数组不是。</p>
+<p>数组作函数参数传递，为何形参只有第一维大小会丢失？</p>
+<h2 id="标准对这些概念进行组织的逻辑"><a class="header" href="#标准对这些概念进行组织的逻辑">标准对这些概念进行组织的逻辑</a></h2>
+<ol>
+<li>术语规则的<strong>一般化</strong></li>
+<li>概念组织的<strong>系统化</strong></li>
+</ol>
+<hr />
+<pre><code class="language-c">               int a     =  0;
+         const int b     =  0;
+const volatile int c     =  0;
+               int d[10] = {0};
+         const int e[10] = {0};
+const volatile int f[10] = {0};
+</code></pre>
+<p>上述六个，称为 <strong>对象标识符</strong>，既不是变量也不是常量，有<strong>一致的处理逻辑规则</strong>。</p>
+<pre><code class="language-c">// chapter_01/general_rules.c
+void foo() {
+    int a[10] = {1};
+    0 [a] = 1;
+}
+
+int main(int argc, char *argv[]) {
+    foo();
+    (*foo)();
+    (&amp;foo)();
+    return 0;
+}
+</code></pre>
+<p>问题：对于函数 <code>void foo() {...}</code>，为什么 <code>foo()</code>，<code>(*foo)()</code>，<code>(&amp;foo())</code> 都可以正确执行？为什么 <code>0[a]</code> 也是对的？这里体现的是<strong>表达式与表达式求值的一般化规则</strong>，而非什么“本质上”、“特殊的”、“语法糖”。</p>
+<h3 id="c-语言一般化的基础以对象为核心构建概念体系"><a class="header" href="#c-语言一般化的基础以对象为核心构建概念体系">C 语言一般化的基础：以对象为核心构建概念体系</a></h3>
+<ul>
+<li>对象的基本概念（各种属性）
+<ul>
+<li><code>type</code> <code>size</code> <code>alignment</code> <code>linkage</code> <code>storage duration</code> 等</li>
+<li>（类型、大小、对齐、链接、生存周期）</li>
+</ul>
+</li>
+<li>如何分配一个对象（4 种分配方式）
+<ul>
+<li>对象声明、字符串、compound literal、malloc 等</li>
+</ul>
+</li>
+<li>如何定位一个对象（17 类表达式）
+<ul>
+<li><code>lvalue</code> vs. <code>non-lvalue</code></li>
+</ul>
+</li>
+<li>如何获取 lvalue 和 non-lvalue 表达式的相关信息，evaluate 和 rvalue 等</li>
+<li>如何释放对象占用的内存</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+                            <a rel="next prefetch" href="chapter_02.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+                    <a rel="next prefetch" href="chapter_02.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

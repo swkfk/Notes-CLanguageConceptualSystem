@@ -1,0 +1,333 @@
+<!DOCTYPE HTML>
+<html lang="zh-cn" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>对象类型：算术类型 - 《C 语言标准中的概念体系》笔记</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="chapter_01.html"><strong aria-hidden="true">1.</strong> 序言</a></li><li class="chapter-item expanded "><a href="chapter_02.html"><strong aria-hidden="true">2.</strong> 初识对象</a></li><li class="chapter-item expanded "><a href="chapter_03.html" class="active"><strong aria-hidden="true">3.</strong> 对象类型：算术类型</a></li><li class="chapter-item expanded "><a href="chapter_04.html"><strong aria-hidden="true">4.</strong> 派生类型：数组类型</a></li><li class="chapter-item expanded "><a href="chapter_05.html"><strong aria-hidden="true">5.</strong> 派生类型：指针类型</a></li><li class="chapter-item expanded "><a href="chapter_06.html"><strong aria-hidden="true">6.</strong> 对象类型：限定类型</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">《C 语言标准中的概念体系》笔记</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="对象类型算术类型"><a class="header" href="#对象类型算术类型">对象类型：算术类型</a></h1>
+<p><a href="https://www.bilibili.com/video/BV1Xy411q7SZ">@Bili: BV1Xy411q7SZ</a></p>
+<h2 id="类型的分类"><a class="header" href="#类型的分类">类型的分类</a></h2>
+<p>第一种分类方式：<div class="mdbook-graphviz-output"><!-- Generated by graphviz version 2.43.0 (0) --><!-- Title: %3 Pages: 1 --><svg width="516pt" height="188pt" viewBox="0.00 0.00 516.03 188.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 184)"><title>%3</title><polygon fill="white" stroke="transparent" points="-4,4 -4,-184 512.03,-184 512.03,4 -4,4"/><!-- Type --><g id="node1" class="node"><title>Type</title><ellipse fill="none" stroke="black" cx="330.94" cy="-162" rx="33.29" ry="18"/><text text-anchor="middle" x="330.94" y="-158.3" font-family="Times,serif" font-size="14.00">Type</text></g><!-- Object Type --><g id="node2" class="node"><title>Object Type</title><ellipse fill="none" stroke="black" cx="249.94" cy="-90" rx="66.09" ry="18"/><text text-anchor="middle" x="249.94" y="-86.3" font-family="Times,serif" font-size="14.00">Object Type</text></g><!-- Type&#45;&gt;Object Type --><g id="edge1" class="edge"><title>Type-&gt;Object Type</title><path fill="none" stroke="black" d="M313.76,-146.15C302.94,-136.81 288.76,-124.54 276.51,-113.96"/><polygon fill="black" stroke="black" points="278.64,-111.18 268.79,-107.29 274.07,-116.48 278.64,-111.18"/></g><!-- Function Type --><g id="node3" class="node"><title>Function Type</title><ellipse fill="none" stroke="black" cx="411.94" cy="-90" rx="77.19" ry="18"/><text text-anchor="middle" x="411.94" y="-86.3" font-family="Times,serif" font-size="14.00">Function Type</text></g><!-- Type&#45;&gt;Function Type --><g id="edge2" class="edge"><title>Type-&gt;Function Type</title><path fill="none" stroke="black" d="M348.12,-146.15C358.86,-136.87 372.92,-124.72 385.11,-114.18"/><polygon fill="black" stroke="black" points="387.52,-116.73 392.8,-107.54 382.95,-111.43 387.52,-116.73"/></g><!-- Compelete Object Type --><g id="node4" class="node"><title>Compelete Object Type</title><ellipse fill="none" stroke="black" cx="118.94" cy="-18" rx="118.88" ry="18"/><text text-anchor="middle" x="118.94" y="-14.3" font-family="Times,serif" font-size="14.00">Compelete Object Type</text></g><!-- Object Type&#45;&gt;Compelete Object Type --><g id="edge3" class="edge"><title>Object Type-&gt;Compelete Object Type</title><path fill="none" stroke="black" d="M221.19,-73.64C202.9,-63.87 178.96,-51.07 158.85,-40.32"/><polygon fill="black" stroke="black" points="160.38,-37.17 149.91,-35.55 157.08,-43.35 160.38,-37.17"/></g><!-- Incompelete Object Type --><g id="node5" class="node"><title>Incompelete Object Type</title><ellipse fill="none" stroke="black" cx="381.94" cy="-18" rx="126.18" ry="18"/><text text-anchor="middle" x="381.94" y="-14.3" font-family="Times,serif" font-size="14.00">Incompelete Object Type</text></g><!-- Object Type&#45;&gt;Incompelete Object Type --><g id="edge4" class="edge"><title>Object Type-&gt;Incompelete Object Type</title><path fill="none" stroke="black" d="M278.91,-73.64C297.33,-63.87 321.46,-51.07 341.73,-40.32"/><polygon fill="black" stroke="black" points="343.54,-43.32 350.74,-35.55 340.26,-37.14 343.54,-43.32"/></g></g></svg></div></p>
+<p>第二种分类方式：<div class="mdbook-graphviz-output"><!-- Generated by graphviz version 2.43.0 (0) --><!-- Title: %3 Pages: 1 --><svg width="514pt" height="116pt" viewBox="0.00 0.00 514.49 116.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 112)"><title>%3</title><polygon fill="white" stroke="transparent" points="-4,4 -4,-112 510.49,-112 510.49,4 -4,4"/><!-- Type --><g id="node1" class="node"><title>Type</title><ellipse fill="none" stroke="black" cx="261.14" cy="-90" rx="33.29" ry="18"/><text text-anchor="middle" x="261.14" y="-86.3" font-family="Times,serif" font-size="14.00">Type</text></g><!-- Arithmetic Type --><g id="node2" class="node"><title>Arithmetic Type</title><ellipse fill="none" stroke="black" cx="85.14" cy="-18" rx="85.29" ry="18"/><text text-anchor="middle" x="85.14" y="-14.3" font-family="Times,serif" font-size="14.00">Arithmetic Type</text></g><!-- Type&#45;&gt;Arithmetic Type --><g id="edge1" class="edge"><title>Type-&gt;Arithmetic Type</title><path fill="none" stroke="black" d="M235.17,-78.67C208.28,-67.98 165.66,-51.03 132.71,-37.92"/><polygon fill="black" stroke="black" points="133.85,-34.6 123.26,-34.16 131.26,-41.11 133.85,-34.6"/></g><!-- Derived Type --><g id="node3" class="node"><title>Derived Type</title><ellipse fill="none" stroke="black" cx="261.14" cy="-18" rx="72.59" ry="18"/><text text-anchor="middle" x="261.14" y="-14.3" font-family="Times,serif" font-size="14.00">Derived Type</text></g><!-- Type&#45;&gt;Derived Type --><g id="edge2" class="edge"><title>Type-&gt;Derived Type</title><path fill="none" stroke="black" d="M261.14,-71.7C261.14,-63.98 261.14,-54.71 261.14,-46.11"/><polygon fill="black" stroke="black" points="264.64,-46.1 261.14,-36.1 257.64,-46.1 264.64,-46.1"/></g><!-- Qualified Type --><g id="node4" class="node"><title>Qualified Type</title><ellipse fill="none" stroke="black" cx="429.14" cy="-18" rx="77.19" ry="18"/><text text-anchor="middle" x="429.14" y="-14.3" font-family="Times,serif" font-size="14.00">Qualified Type</text></g><!-- Type&#45;&gt;Qualified Type --><g id="edge3" class="edge"><title>Type-&gt;Qualified Type</title><path fill="none" stroke="black" d="M286.66,-78.37C312.36,-67.66 352.57,-50.9 383.73,-37.92"/><polygon fill="black" stroke="black" points="385.2,-41.1 393.08,-34.02 382.51,-34.64 385.2,-41.1"/></g></g></svg></div></p>
+<h2 id="对象类型-t-及其大小与对其要求"><a class="header" href="#对象类型-t-及其大小与对其要求">对象类型 <code>T</code> 及其大小与对其要求</a></h2>
+<blockquote>
+<p><code>T</code>：C 语言任何一个<strong>对象类型</strong>的形式化定义</p>
+</blockquote>
+<ul>
+<li><strong><code>sizeof(T)</code></strong>：规定了一个 <code>T</code> 类型的对象的大小是多少（<strong>不完全类型没有 size</strong>），其实是对象的<strong>字节个数</strong></li>
+<li><strong><code>alignof(T)</code></strong>：规定了一个 <code>T</code> 类型的对象缺省对齐要求是多少（对象的对齐要求可变），对齐要求是要求<strong>对象地址</strong>能够被<strong>整除</strong></li>
+</ul>
+<blockquote>
+<p>对象地址（Object Address）：对象所占用的连续字节中最低字节的编号</p>
+<p>C23 之前，关键字使用 <code>_Alignof</code>，C23 开始提升为 <code>alignof</code></p>
+</blockquote>
+<h2 id="算术类型arithmetic-type"><a class="header" href="#算术类型arithmetic-type">算术类型（Arithmetic Type）</a></h2>
+<p>算术类型都是<strong>完全对象类型</strong>。大致可以分类如下：<div class="mdbook-graphviz-output"><!-- Generated by graphviz version 2.43.0 (0) --><!-- Title: %3 Pages: 1 --><svg width="601pt" height="314pt" viewBox="0.00 0.00 601.25 314.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 310)"><title>%3</title><polygon fill="white" stroke="transparent" points="-4,4 -4,-310 597.25,-310 597.25,4 -4,4"/><!-- Arithmetic Type --><g id="node1" class="node"><title>Arithmetic Type</title><ellipse fill="none" stroke="black" cx="85.14" cy="-126" rx="85.29" ry="18"/><text text-anchor="middle" x="85.14" y="-122.3" font-family="Times,serif" font-size="14.00">Arithmetic Type</text></g><!-- Integer Type --><g id="node2" class="node"><title>Integer Type</title><ellipse fill="none" stroke="black" cx="276.48" cy="-180" rx="70.39" ry="18"/><text text-anchor="middle" x="276.48" y="-176.3" font-family="Times,serif" font-size="14.00">Integer Type</text></g><!-- Arithmetic Type&#45;&gt;Integer Type --><g id="edge1" class="edge"><title>Arithmetic Type-&gt;Integer Type</title><path fill="none" stroke="black" d="M136.88,-140.47C162.23,-147.7 192.98,-156.47 219.07,-163.91"/><polygon fill="black" stroke="black" points="218.25,-167.32 228.82,-166.69 220.17,-160.58 218.25,-167.32"/></g><!-- Float Type --><g id="node7" class="node"><title>Float Type</title><ellipse fill="none" stroke="black" cx="276.48" cy="-72" rx="59.59" ry="18"/><text text-anchor="middle" x="276.48" y="-68.3" font-family="Times,serif" font-size="14.00">Float Type</text></g><!-- Arithmetic Type&#45;&gt;Float Type --><g id="edge6" class="edge"><title>Arithmetic Type-&gt;Float Type</title><path fill="none" stroke="black" d="M136.88,-111.53C163.3,-103.99 195.58,-94.79 222.35,-87.15"/><polygon fill="black" stroke="black" points="223.65,-90.42 232.31,-84.31 221.73,-83.69 223.65,-90.42"/></g><!-- char --><g id="node3" class="node"><title>char</title><ellipse fill="none" stroke="black" cx="487.96" cy="-288" rx="31.4" ry="18"/><text text-anchor="middle" x="487.96" y="-284.3" font-family="Times,serif" font-size="14.00">char</text></g><!-- Integer Type&#45;&gt;char --><g id="edge2" class="edge"><title>Integer Type-&gt;char</title><path fill="none" stroke="black" d="M295.31,-197.43C315.09,-215.82 348.71,-244.4 382.67,-261 402.99,-270.93 427.38,-277.51 447.47,-281.68"/><polygon fill="black" stroke="black" points="447.05,-285.16 457.53,-283.65 448.39,-278.29 447.05,-285.16"/></g><!-- Signed Integer --><g id="node4" class="node"><title>Signed Integer</title><ellipse fill="none" stroke="black" cx="487.96" cy="-234" rx="79.89" ry="18"/><text text-anchor="middle" x="487.96" y="-230.3" font-family="Times,serif" font-size="14.00">Signed Integer</text></g><!-- Integer Type&#45;&gt;Signed Integer --><g id="edge3" class="edge"><title>Integer Type-&gt;Signed Integer</title><path fill="none" stroke="black" d="M326.59,-192.66C355.84,-200.2 393.23,-209.84 424.56,-217.91"/><polygon fill="black" stroke="black" points="423.94,-221.37 434.49,-220.47 425.68,-214.59 423.94,-221.37"/></g><!-- Unsigned Integer --><g id="node5" class="node"><title>Unsigned Integer</title><ellipse fill="none" stroke="black" cx="487.96" cy="-180" rx="92.08" ry="18"/><text text-anchor="middle" x="487.96" y="-176.3" font-family="Times,serif" font-size="14.00">Unsigned Integer</text></g><!-- Integer Type&#45;&gt;Unsigned Integer --><g id="edge4" class="edge"><title>Integer Type-&gt;Unsigned Integer</title><path fill="none" stroke="black" d="M346.94,-180C359.25,-180 372.3,-180 385.29,-180"/><polygon fill="black" stroke="black" points="385.67,-183.5 395.67,-180 385.67,-176.5 385.67,-183.5"/></g><!-- Enumerated Integer --><g id="node6" class="node"><title>Enumerated Integer</title><ellipse fill="none" stroke="black" cx="487.96" cy="-126" rx="105.08" ry="18"/><text text-anchor="middle" x="487.96" y="-122.3" font-family="Times,serif" font-size="14.00">Enumerated Integer</text></g><!-- Integer Type&#45;&gt;Enumerated Integer --><g id="edge5" class="edge"><title>Integer Type-&gt;Enumerated Integer</title><path fill="none" stroke="black" d="M326.59,-167.34C354.08,-160.25 388.77,-151.31 418.85,-143.56"/><polygon fill="black" stroke="black" points="420.05,-146.86 428.86,-140.98 418.3,-140.09 420.05,-146.86"/></g><!-- Real Float --><g id="node8" class="node"><title>Real Float</title><ellipse fill="none" stroke="black" cx="487.96" cy="-72" rx="57.69" ry="18"/><text text-anchor="middle" x="487.96" y="-68.3" font-family="Times,serif" font-size="14.00">Real Float</text></g><!-- Float Type&#45;&gt;Real Float --><g id="edge7" class="edge"><title>Float Type-&gt;Real Float</title><path fill="none" stroke="black" d="M336.39,-72C362.36,-72 393.01,-72 419.85,-72"/><polygon fill="black" stroke="black" points="419.94,-75.5 429.94,-72 419.94,-68.5 419.94,-75.5"/></g><!-- Complex --><g id="node9" class="node"><title>Complex</title><ellipse fill="none" stroke="black" cx="487.96" cy="-18" rx="51.19" ry="18"/><text text-anchor="middle" x="487.96" y="-14.3" font-family="Times,serif" font-size="14.00">Complex</text></g><!-- Float Type&#45;&gt;Complex --><g id="edge8" class="edge"><title>Float Type-&gt;Complex</title><path fill="none" stroke="black" d="M322.42,-60.42C355.79,-51.81 401.35,-40.07 436.06,-31.12"/><polygon fill="black" stroke="black" points="437.19,-34.44 446,-28.56 435.45,-27.67 437.19,-34.44"/></g></g></svg></div></p>
+<blockquote>
+<p>C23 的新变化：</p>
+<ul>
+<li><code>_Bool</code> 提升为 <code>bool</code></li>
+<li>增加了指定位域个数整数类型 <code>_BitInt(N)</code> 与 <code>unsigned _BitInt(N)</code></li>
+<li>增加了三个十进制浮点类型 <code>_Decimal32</code>，<code>_Decimal64</code> 与 <code>_Decimal128</code></li>
+</ul>
+</blockquote>
+<h2 id="标准有符号整数类型"><a class="header" href="#标准有符号整数类型">标准有符号整数类型</a></h2>
+<p>包含 5 个：<code>signed char</code>，<code>short int</code>，<code>int</code>，<code>long int</code> 与 <code>long long int</code>。</p>
+<p>所有的 bits 可分为 3 个部分：<code>sign bits</code>，<code>value bits</code> 与 <code>padding bits</code>，但摆放位置由编译器确定。</p>
+<p>假设对于对象类型 <code>T</code> 有 <code>sign bits</code> 的个数加上 <code>value bits</code> 的个数为 \(N\)，则有下面的概念：</p>
+<ul>
+<li>宽度（Width）：\(N\)</li>
+<li>精度（Precision）：\(N-1\)</li>
+<li>对象值范围：\([-2^{N-1}, 2^{N-1}-1]\)</li>
+</ul>
+<h3 id="宽度定义"><a class="header" href="#宽度定义">宽度定义</a></h3>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center">类型</th><th style="text-align: center">宽度宏</th><th style="text-align: center">取值要求</th></tr></thead><tbody>
+<tr><td style="text-align: center"><code>signed char</code></td><td style="text-align: center"><code>SCHAR_WIDTH</code></td><td style="text-align: center"><code>CHAR_BIT</code></td></tr>
+<tr><td style="text-align: center"><code>short int</code></td><td style="text-align: center"><code>SHRT_WIDTH</code></td><td style="text-align: center">\(\geqslant 8\)</td></tr>
+<tr><td style="text-align: center"><code>int</code></td><td style="text-align: center"><code>INT_WIDTH</code></td><td style="text-align: center">\(\geqslant 16\)</td></tr>
+<tr><td style="text-align: center"><code>long int</code></td><td style="text-align: center"><code>LONG_WIDTH</code></td><td style="text-align: center">\(\geqslant 32\)</td></tr>
+<tr><td style="text-align: center"><code>long long int</code></td><td style="text-align: center"><code>LLONG_WIDTH</code></td><td style="text-align: center">\(\geqslant 64\)</td></tr>
+</tbody></table>
+</div>
+<ul>
+<li>书写类型表示值范围时，应使用诸如 <code>SCHAR_MIN</code> 与 <code>SCHAR_MAX</code> 的宏，而非直接书写数字。</li>
+<li><code>signed char</code> 类型不允许有 <code>padding bits</code>，因此 <code>sizeof(signed char)</code> 一定为 1；其他四种标准有符号整数类型没有明确规定 <code>padding bits</code>，但一般可以假设没有。</li>
+</ul>
+<blockquote>
+<p><code>typedef</code> 的用法：<code>typedef T alias</code>，为类型 <code>T</code> 设置别名。通过 <code>typedef</code> 可以提高程序的可移植性，比如：</p>
+<pre><code class="language-c">#ifdef ImplA
+    typedef short int INT16;
+    typedef int INT32;
+#elifdef ImplB
+    typedef int INT16;
+    typedef long int INT32;
+#endif
+</code></pre>
+</blockquote>
+<blockquote>
+<p>C23 中指定位域的类型 <code>_BitInt(N)</code>，指定有符号整数类型的宽度为 <code>N</code>，该类型的对象的对象值范围为 \([-2^{N-1}, 2^{N-1}-1]\).</p>
+<p>该类型可能会有 <code>padding bits</code>，个数为：<code>sizeof(_BitInt(N)) * CHAR_BIT - N</code>.</p>
+</blockquote>
+<h2 id="标准无符号整数类型"><a class="header" href="#标准无符号整数类型">标准无符号整数类型</a></h2>
+<p>除了五种标准有符号整数类型，还有一个 <code>bool</code> 类型（C23 以前为 <code>_Bool</code>）。</p>
+<p>对于标准无符号整数类型 <code>T</code> 的对象，bits 被分为两部分：<code>value bits</code> 与 <code>padding bits</code>，摆放位置同样由编译器确定。</p>
+<p>对象类型 <code>T</code> 的宽度 \(N\) 同样也是其精度，其对象的对象值范围为 \([0, 2^N-1]\).</p>
+<h3 id="宽度定义-1"><a class="header" href="#宽度定义-1">宽度定义</a></h3>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center">类型</th><th style="text-align: center">宽度宏</th><th style="text-align: center">取值要求</th></tr></thead><tbody>
+<tr><td style="text-align: center"><code>unsigned char</code></td><td style="text-align: center"><code>UCHAR_WIDTH</code></td><td style="text-align: center"><code>CHAR_BIT</code></td></tr>
+<tr><td style="text-align: center"><code>unsigned short int</code></td><td style="text-align: center"><code>USHRT_WIDTH</code></td><td style="text-align: center">\(\geqslant 8\)</td></tr>
+<tr><td style="text-align: center"><code>unsigned int</code></td><td style="text-align: center"><code>UINT_WIDTH</code></td><td style="text-align: center">\(\geqslant 16\)</td></tr>
+<tr><td style="text-align: center"><code>unsigned long int</code></td><td style="text-align: center"><code>ULONG_WIDTH</code></td><td style="text-align: center">\(\geqslant 32\)</td></tr>
+<tr><td style="text-align: center"><code>unsigned long long int</code></td><td style="text-align: center"><code>ULLONG_WIDTH</code></td><td style="text-align: center">\(\geqslant 64\)</td></tr>
+<tr><td style="text-align: center"><code>bool</code></td><td style="text-align: center"><code>BOOL_WIDTH</code></td><td style="text-align: center">\(1\)</td></tr>
+</tbody></table>
+</div>
+<ul>
+<li><code>bool</code> 类型宽度为 1，表征 <code>true</code> 和 <code>false</code> 两个值，但是其 <code>size</code> 由编译器决定，一定会有 <code>padding bits</code>，个数为：<code>sizeof(bool) * CHAR_BIT - 1</code>.</li>
+</ul>
+<h2 id="对齐要求"><a class="header" href="#对齐要求">对齐要求</a></h2>
+<p>对象的对齐要求一定是 \(2^n\) 的值，如 \(1,2,4,8,\cdots\)，值越小，称为<strong>对齐要求越弱</strong>（weak），反之则<strong>越强</strong>（strong）。</p>
+<p>标准规定，<code>signed char</code> 与 <code>unsigned char</code> 的对齐要求是最弱的，但不一定是 \(1\).</p>
+<h2 id="枚举类型"><a class="header" href="#枚举类型">枚举类型</a></h2>
+<p>枚举类型由程序员定义，实际的<strong>实现类型</strong>（<strong>Underlying Type</strong>）有两种方式确定：</p>
+<ul>
+<li>指定实现类型（Fixed Underlying Type）：
+<ul>
+<li>定义时指定：<code>enum Season : int {Spring, Summer, Autumn, Winter}</code></li>
+<li>自 C23 始可用</li>
+</ul>
+</li>
+<li>由编译器自动设置为下列 5 种整数类型之一：
+<ul>
+<li><code>char</code></li>
+<li>标准 {有 | 无} 符号整数类型</li>
+<li>扩展 {有 | 无} 符号整数类型</li>
+</ul>
+</li>
+</ul>
+<h2 id="char-类型"><a class="header" href="#char-类型"><code>char</code> 类型</a></h2>
+<p><code>char</code>、<code>signed char</code> 与 <code>unsigned char</code> 是<strong>三种不同的类型</strong>！它们统称为<strong>字符类型</strong>（Character Type）。</p>
+<p>编译器会指定 <code>char</code> 与其中一种行为一致。</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="chapter_02.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="chapter_04.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="chapter_02.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="chapter_04.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

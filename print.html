@@ -1,0 +1,619 @@
+<!DOCTYPE HTML>
+<html lang="zh-cn" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>《C 语言标准中的概念体系》笔记</title>
+        <meta name="robots" content="noindex">
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="chapter_01.html"><strong aria-hidden="true">1.</strong> 序言</a></li><li class="chapter-item expanded "><a href="chapter_02.html"><strong aria-hidden="true">2.</strong> 初识对象</a></li><li class="chapter-item expanded "><a href="chapter_03.html"><strong aria-hidden="true">3.</strong> 对象类型：算术类型</a></li><li class="chapter-item expanded "><a href="chapter_04.html"><strong aria-hidden="true">4.</strong> 派生类型：数组类型</a></li><li class="chapter-item expanded "><a href="chapter_05.html"><strong aria-hidden="true">5.</strong> 派生类型：指针类型</a></li><li class="chapter-item expanded "><a href="chapter_06.html"><strong aria-hidden="true">6.</strong> 对象类型：限定类型</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">《C 语言标准中的概念体系》笔记</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="序言"><a class="header" href="#序言">序言</a></h1>
+<p><a href="https://www.bilibili.com/video/BV1HT421Y7H3">@Bili: BV1HT421Y7H3</a></p>
+<h2 id="c-语言知识的三个层次"><a class="header" href="#c-语言知识的三个层次">C 语言知识的三个层次</a></h2>
+<ul>
+<li><strong>语法类</strong>知识
+<ul>
+<li>书写语法规范的代码（通过编译）</li>
+</ul>
+</li>
+<li><strong>概念类</strong>知识
+<ul>
+<li>正确理解代码的含义（承上启下）</li>
+</ul>
+</li>
+<li><strong>策略类</strong>知识
+<ul>
+<li>高效完成软件开发</li>
+</ul>
+</li>
+</ul>
+<h2 id="辨析一标准中并没有变量这个概念"><a class="header" href="#辨析一标准中并没有变量这个概念">辨析一：标准中并没有“变量”这个概念？！</a></h2>
+<h3 id="1-所谓的变量从何而来"><a class="header" href="#1-所谓的变量从何而来">1. 所谓的“变量”从何而来</a></h3>
+<p>事实上，"<strong>Variable</strong>" 这个单词并没有作为术语出现在标准中，但是教材们依然将诸如 <code>int a = 0;</code> 中的 <code>a</code> 称为“变量”，这里面的逻辑是，<code>a</code> 的值<strong>可变</strong>！</p>
+<h3 id="2-const-int-b--0-是什么东西"><a class="header" href="#2-const-int-b--0-是什么东西">2. <code>const int b = 0;</code> 是什么东西</a></h3>
+<p>现在，<code>b</code> 的值不能变了，那可以将它称为<strong>常量</strong>（constant）吗？不能，因为 C 标准中对于“常量”有另外的明确的定义。</p>
+<p>此外，教材们本身并未统一意见，因此这种叫法是有问题的。</p>
+<h3 id="3-再加上-volatile-呢"><a class="header" href="#3-再加上-volatile-呢">3. 再加上 <code>volatile</code> 呢</a></h3>
+<p>对于 <code>const volatile int c = 0;</code>。它被 <code>const</code> 修饰，意味着不能被程序员修改；被 <code>volatile</code> 修饰，意味着会被“意想不到”的方式修改。</p>
+<blockquote>
+<p>笔者注：<code>volatile</code> 关键词用于标记变量可能被 "unknown to the implementation" 的方式修改，因此，对于被这个关键词修饰的”<del>变量</del>“，每次读取时都应该从内存中取值，从而阻止了编译优化的进行。</p>
+</blockquote>
+<p>那么问题来了，它到底会不会变呢？</p>
+<h2 id="辨析二常量还是常量表达式这是一个问题"><a class="header" href="#辨析二常量还是常量表达式这是一个问题">辨析二：常量还是常量表达式，这是一个问题</a></h2>
+<h3 id="1-常量与常量表达式有显式的差别"><a class="header" href="#1-常量与常量表达式有显式的差别">1. 常量与常量表达式有显式的差别</a></h3>
+<p>有四个例子：</p>
+<ul>
+<li><code>10</code>：是<strong>整数常量</strong></li>
+<li><code>+10</code>：不是整数常量，而是<strong>整数常量表达式</strong></li>
+<li><code>(int) (10.0)</code>：不是整数常量，而是<strong>整数常量表达式</strong></li>
+<li><code>(int) (+10.0)</code>：<strong>不是</strong>整数常量，<strong>也不是</strong>整数常量表达式</li>
+</ul>
+<p>再来一个足够具有颠覆性的实例：</p>
+<pre><code class="language-c">// chapter_01/const_expr.c
+int x[5][(int) (10.0)];
+int y[5][(int) (+10.0)];
+int i = 0, j = 0;
+
+sizeof(x[i++]);
+printf("i: %d\n", i);
+
+sizeof(y[j++]);
+printf("j: %d\n", j);
+</code></pre>
+<p>运行结果：</p>
+<pre><code class="language-text">i: 0
+j: 1
+</code></pre>
+<p>上述例子综合涉及了 C 语言标准体系里的诸多概念。</p>
+<h3 id="2-数组带来了更多的混乱"><a class="header" href="#2-数组带来了更多的混乱">2. 数组带来了更多的混乱</a></h3>
+<p><code>int d[10] = {0};</code>，应该如何表述 <code>d</code> 呢？</p>
+<p><code>d</code> 不是常量，<strong>也不是首元素的地址</strong>！</p>
+<p>对于下面的例子：</p>
+<pre><code class="language-c">int d[10] = {0};
+int main() {
+    int e[10] = {0};
+    return 0;
+}
+</code></pre>
+<p><code>d</code> 不是常量，但是“<strong>地址常量表达式</strong>”；<code>e</code> 既不是常量，<strong>也不是</strong>地址常量表达式。</p>
+<h2 id="现有学习资料的不足相较于标准的概念体系"><a class="header" href="#现有学习资料的不足相较于标准的概念体系">现有学习资料的不足（相较于标准的概念体系）</a></h2>
+<h3 id="1-核心概念缺失"><a class="header" href="#1-核心概念缺失">1. 核心概念缺失</a></h3>
+<p>对象、<code>lvalue</code>、<code>rvalue</code> 等概念介绍缺失或不详细。</p>
+<h3 id="2-部分概念混淆有误"><a class="header" href="#2-部分概念混淆有误">2. 部分概念混淆有误</a></h3>
+<p>何为变量、常量？常量与常量表达式如何区分？</p>
+<p>字符串常量？数组名就是首元素地址吗？</p>
+<h3 id="3-存在很多自创概念"><a class="header" href="#3-存在很多自创概念">3. 存在很多自创概念</a></h3>
+<p>行指针、列指针、数组指针、指针数组、多级指针、模拟引用传递等。</p>
+<p>行列是二维视角，但数组不是。</p>
+<p>数组作函数参数传递，为何形参只有第一维大小会丢失？</p>
+<h2 id="标准对这些概念进行组织的逻辑"><a class="header" href="#标准对这些概念进行组织的逻辑">标准对这些概念进行组织的逻辑</a></h2>
+<ol>
+<li>术语规则的<strong>一般化</strong></li>
+<li>概念组织的<strong>系统化</strong></li>
+</ol>
+<hr />
+<pre><code class="language-c">               int a     =  0;
+         const int b     =  0;
+const volatile int c     =  0;
+               int d[10] = {0};
+         const int e[10] = {0};
+const volatile int f[10] = {0};
+</code></pre>
+<p>上述六个，称为 <strong>对象标识符</strong>，既不是变量也不是常量，有<strong>一致的处理逻辑规则</strong>。</p>
+<pre><code class="language-c">// chapter_01/general_rules.c
+void foo() {
+    int a[10] = {1};
+    0 [a] = 1;
+}
+
+int main(int argc, char *argv[]) {
+    foo();
+    (*foo)();
+    (&amp;foo)();
+    return 0;
+}
+</code></pre>
+<p>问题：对于函数 <code>void foo() {...}</code>，为什么 <code>foo()</code>，<code>(*foo)()</code>，<code>(&amp;foo())</code> 都可以正确执行？为什么 <code>0[a]</code> 也是对的？这里体现的是<strong>表达式与表达式求值的一般化规则</strong>，而非什么“本质上”、“特殊的”、“语法糖”。</p>
+<h3 id="c-语言一般化的基础以对象为核心构建概念体系"><a class="header" href="#c-语言一般化的基础以对象为核心构建概念体系">C 语言一般化的基础：以对象为核心构建概念体系</a></h3>
+<ul>
+<li>对象的基本概念（各种属性）
+<ul>
+<li><code>type</code> <code>size</code> <code>alignment</code> <code>linkage</code> <code>storage duration</code> 等</li>
+<li>（类型、大小、对齐、链接、生存周期）</li>
+</ul>
+</li>
+<li>如何分配一个对象（4 种分配方式）
+<ul>
+<li>对象声明、字符串、compound literal、malloc 等</li>
+</ul>
+</li>
+<li>如何定位一个对象（17 类表达式）
+<ul>
+<li><code>lvalue</code> vs. <code>non-lvalue</code></li>
+</ul>
+</li>
+<li>如何获取 lvalue 和 non-lvalue 表达式的相关信息，evaluate 和 rvalue 等</li>
+<li>如何释放对象占用的内存</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="初识对象"><a class="header" href="#初识对象">初识对象</a></h1>
+<p><a href="https://www.bilibili.com/video/BV1VS411A7s3">@Bili: BV1VS411A7s3</a></p>
+<h2 id="内存基本概念回顾"><a class="header" href="#内存基本概念回顾">内存基本概念回顾</a></h2>
+<p><strong>bit</strong> 表示 <code>0 / 1</code>，<strong>多个</strong> bit 拼在一起，能够组成一个 <strong>byte</strong>（字节）。</p>
+<p><code>&lt;limits.h&gt;</code> 中的宏 <code>CHAR_BIT</code> 规定了一个 byte 的 bit 数，C 语言的标准仅规定了 <strong><code>CHAR_BIT &gt;= 8</code></strong>，而非一个确切的值。</p>
+<p>字节是<strong>基础存储单元</strong>，每个字节都有一个编号，就是<strong>地址</strong>。</p>
+<p>内存是一系列字节<strong>顺序</strong>排列在一起组成的存储<strong>结构</strong>。</p>
+<p>机器的位数（32 位，64 位等等）代表的便是内存编号的 bit 数。</p>
+<blockquote>
+<p>程序视角的地址是字节的逻辑地址（虚拟地址），实际情境下会涉及逻辑地址与物理地址的映射。</p>
+</blockquote>
+<h2 id="对象的对象表示"><a class="header" href="#对象的对象表示">对象的对象表示</a></h2>
+<p>对象的各个 bit 组成的<strong>二进制串</strong>是这个对象的<strong>对象表示</strong>（Object Representation, <strong>Content</strong>）。</p>
+<p>对象表示与<strong>对象值</strong>（<strong>Value</strong>）可以通过对象类型（Object Type）进行映射。</p>
+<p>两个类型相同的对象，若对象表示一致，则对象值一致，<strong>反之未必成立</strong>。</p>
+<blockquote>
+<p>组成对象的 bits 中，包含了 value bits 和 padding bits，一个对象可能有若干个无意义的 padding bits，其构成由类型对象决定。</p>
+</blockquote>
+<h2 id="对象的表示值"><a class="header" href="#对象的表示值">对象的表示值</a></h2>
+<p>表示值<strong>非标准概念</strong>，实际上指的是程序员视角去观察对象获得的值。与 rvalue 以及表达式求值关系紧密。</p>
+<p>表示值是对象的逻辑值，在读出时关联；对象值是对象的物理属性，映射对象表示，在初始化或者写入时应用。</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="对象类型算术类型"><a class="header" href="#对象类型算术类型">对象类型：算术类型</a></h1>
+<p><a href="https://www.bilibili.com/video/BV1Xy411q7SZ">@Bili: BV1Xy411q7SZ</a></p>
+<h2 id="类型的分类"><a class="header" href="#类型的分类">类型的分类</a></h2>
+<p>第一种分类方式：<div class="mdbook-graphviz-output"><!-- Generated by graphviz version 2.43.0 (0) --><!-- Title: %3 Pages: 1 --><svg width="516pt" height="188pt" viewBox="0.00 0.00 516.03 188.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 184)"><title>%3</title><polygon fill="white" stroke="transparent" points="-4,4 -4,-184 512.03,-184 512.03,4 -4,4"/><!-- Type --><g id="node1" class="node"><title>Type</title><ellipse fill="none" stroke="black" cx="330.94" cy="-162" rx="33.29" ry="18"/><text text-anchor="middle" x="330.94" y="-158.3" font-family="Times,serif" font-size="14.00">Type</text></g><!-- Object Type --><g id="node2" class="node"><title>Object Type</title><ellipse fill="none" stroke="black" cx="249.94" cy="-90" rx="66.09" ry="18"/><text text-anchor="middle" x="249.94" y="-86.3" font-family="Times,serif" font-size="14.00">Object Type</text></g><!-- Type&#45;&gt;Object Type --><g id="edge1" class="edge"><title>Type-&gt;Object Type</title><path fill="none" stroke="black" d="M313.76,-146.15C302.94,-136.81 288.76,-124.54 276.51,-113.96"/><polygon fill="black" stroke="black" points="278.64,-111.18 268.79,-107.29 274.07,-116.48 278.64,-111.18"/></g><!-- Function Type --><g id="node3" class="node"><title>Function Type</title><ellipse fill="none" stroke="black" cx="411.94" cy="-90" rx="77.19" ry="18"/><text text-anchor="middle" x="411.94" y="-86.3" font-family="Times,serif" font-size="14.00">Function Type</text></g><!-- Type&#45;&gt;Function Type --><g id="edge2" class="edge"><title>Type-&gt;Function Type</title><path fill="none" stroke="black" d="M348.12,-146.15C358.86,-136.87 372.92,-124.72 385.11,-114.18"/><polygon fill="black" stroke="black" points="387.52,-116.73 392.8,-107.54 382.95,-111.43 387.52,-116.73"/></g><!-- Compelete Object Type --><g id="node4" class="node"><title>Compelete Object Type</title><ellipse fill="none" stroke="black" cx="118.94" cy="-18" rx="118.88" ry="18"/><text text-anchor="middle" x="118.94" y="-14.3" font-family="Times,serif" font-size="14.00">Compelete Object Type</text></g><!-- Object Type&#45;&gt;Compelete Object Type --><g id="edge3" class="edge"><title>Object Type-&gt;Compelete Object Type</title><path fill="none" stroke="black" d="M221.19,-73.64C202.9,-63.87 178.96,-51.07 158.85,-40.32"/><polygon fill="black" stroke="black" points="160.38,-37.17 149.91,-35.55 157.08,-43.35 160.38,-37.17"/></g><!-- Incompelete Object Type --><g id="node5" class="node"><title>Incompelete Object Type</title><ellipse fill="none" stroke="black" cx="381.94" cy="-18" rx="126.18" ry="18"/><text text-anchor="middle" x="381.94" y="-14.3" font-family="Times,serif" font-size="14.00">Incompelete Object Type</text></g><!-- Object Type&#45;&gt;Incompelete Object Type --><g id="edge4" class="edge"><title>Object Type-&gt;Incompelete Object Type</title><path fill="none" stroke="black" d="M278.91,-73.64C297.33,-63.87 321.46,-51.07 341.73,-40.32"/><polygon fill="black" stroke="black" points="343.54,-43.32 350.74,-35.55 340.26,-37.14 343.54,-43.32"/></g></g></svg></div></p>
+<p>第二种分类方式：<div class="mdbook-graphviz-output"><!-- Generated by graphviz version 2.43.0 (0) --><!-- Title: %3 Pages: 1 --><svg width="514pt" height="116pt" viewBox="0.00 0.00 514.49 116.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 112)"><title>%3</title><polygon fill="white" stroke="transparent" points="-4,4 -4,-112 510.49,-112 510.49,4 -4,4"/><!-- Type --><g id="node1" class="node"><title>Type</title><ellipse fill="none" stroke="black" cx="261.14" cy="-90" rx="33.29" ry="18"/><text text-anchor="middle" x="261.14" y="-86.3" font-family="Times,serif" font-size="14.00">Type</text></g><!-- Arithmetic Type --><g id="node2" class="node"><title>Arithmetic Type</title><ellipse fill="none" stroke="black" cx="85.14" cy="-18" rx="85.29" ry="18"/><text text-anchor="middle" x="85.14" y="-14.3" font-family="Times,serif" font-size="14.00">Arithmetic Type</text></g><!-- Type&#45;&gt;Arithmetic Type --><g id="edge1" class="edge"><title>Type-&gt;Arithmetic Type</title><path fill="none" stroke="black" d="M235.17,-78.67C208.28,-67.98 165.66,-51.03 132.71,-37.92"/><polygon fill="black" stroke="black" points="133.85,-34.6 123.26,-34.16 131.26,-41.11 133.85,-34.6"/></g><!-- Derived Type --><g id="node3" class="node"><title>Derived Type</title><ellipse fill="none" stroke="black" cx="261.14" cy="-18" rx="72.59" ry="18"/><text text-anchor="middle" x="261.14" y="-14.3" font-family="Times,serif" font-size="14.00">Derived Type</text></g><!-- Type&#45;&gt;Derived Type --><g id="edge2" class="edge"><title>Type-&gt;Derived Type</title><path fill="none" stroke="black" d="M261.14,-71.7C261.14,-63.98 261.14,-54.71 261.14,-46.11"/><polygon fill="black" stroke="black" points="264.64,-46.1 261.14,-36.1 257.64,-46.1 264.64,-46.1"/></g><!-- Qualified Type --><g id="node4" class="node"><title>Qualified Type</title><ellipse fill="none" stroke="black" cx="429.14" cy="-18" rx="77.19" ry="18"/><text text-anchor="middle" x="429.14" y="-14.3" font-family="Times,serif" font-size="14.00">Qualified Type</text></g><!-- Type&#45;&gt;Qualified Type --><g id="edge3" class="edge"><title>Type-&gt;Qualified Type</title><path fill="none" stroke="black" d="M286.66,-78.37C312.36,-67.66 352.57,-50.9 383.73,-37.92"/><polygon fill="black" stroke="black" points="385.2,-41.1 393.08,-34.02 382.51,-34.64 385.2,-41.1"/></g></g></svg></div></p>
+<h2 id="对象类型-t-及其大小与对其要求"><a class="header" href="#对象类型-t-及其大小与对其要求">对象类型 <code>T</code> 及其大小与对其要求</a></h2>
+<blockquote>
+<p><code>T</code>：C 语言任何一个<strong>对象类型</strong>的形式化定义</p>
+</blockquote>
+<ul>
+<li><strong><code>sizeof(T)</code></strong>：规定了一个 <code>T</code> 类型的对象的大小是多少（<strong>不完全类型没有 size</strong>），其实是对象的<strong>字节个数</strong></li>
+<li><strong><code>alignof(T)</code></strong>：规定了一个 <code>T</code> 类型的对象缺省对齐要求是多少（对象的对齐要求可变），对齐要求是要求<strong>对象地址</strong>能够被<strong>整除</strong></li>
+</ul>
+<blockquote>
+<p>对象地址（Object Address）：对象所占用的连续字节中最低字节的编号</p>
+<p>C23 之前，关键字使用 <code>_Alignof</code>，C23 开始提升为 <code>alignof</code></p>
+</blockquote>
+<h2 id="算术类型arithmetic-type"><a class="header" href="#算术类型arithmetic-type">算术类型（Arithmetic Type）</a></h2>
+<p>算术类型都是<strong>完全对象类型</strong>。大致可以分类如下：<div class="mdbook-graphviz-output"><!-- Generated by graphviz version 2.43.0 (0) --><!-- Title: %3 Pages: 1 --><svg width="601pt" height="314pt" viewBox="0.00 0.00 601.25 314.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 310)"><title>%3</title><polygon fill="white" stroke="transparent" points="-4,4 -4,-310 597.25,-310 597.25,4 -4,4"/><!-- Arithmetic Type --><g id="node1" class="node"><title>Arithmetic Type</title><ellipse fill="none" stroke="black" cx="85.14" cy="-126" rx="85.29" ry="18"/><text text-anchor="middle" x="85.14" y="-122.3" font-family="Times,serif" font-size="14.00">Arithmetic Type</text></g><!-- Integer Type --><g id="node2" class="node"><title>Integer Type</title><ellipse fill="none" stroke="black" cx="276.48" cy="-180" rx="70.39" ry="18"/><text text-anchor="middle" x="276.48" y="-176.3" font-family="Times,serif" font-size="14.00">Integer Type</text></g><!-- Arithmetic Type&#45;&gt;Integer Type --><g id="edge1" class="edge"><title>Arithmetic Type-&gt;Integer Type</title><path fill="none" stroke="black" d="M136.88,-140.47C162.23,-147.7 192.98,-156.47 219.07,-163.91"/><polygon fill="black" stroke="black" points="218.25,-167.32 228.82,-166.69 220.17,-160.58 218.25,-167.32"/></g><!-- Float Type --><g id="node7" class="node"><title>Float Type</title><ellipse fill="none" stroke="black" cx="276.48" cy="-72" rx="59.59" ry="18"/><text text-anchor="middle" x="276.48" y="-68.3" font-family="Times,serif" font-size="14.00">Float Type</text></g><!-- Arithmetic Type&#45;&gt;Float Type --><g id="edge6" class="edge"><title>Arithmetic Type-&gt;Float Type</title><path fill="none" stroke="black" d="M136.88,-111.53C163.3,-103.99 195.58,-94.79 222.35,-87.15"/><polygon fill="black" stroke="black" points="223.65,-90.42 232.31,-84.31 221.73,-83.69 223.65,-90.42"/></g><!-- char --><g id="node3" class="node"><title>char</title><ellipse fill="none" stroke="black" cx="487.96" cy="-288" rx="31.4" ry="18"/><text text-anchor="middle" x="487.96" y="-284.3" font-family="Times,serif" font-size="14.00">char</text></g><!-- Integer Type&#45;&gt;char --><g id="edge2" class="edge"><title>Integer Type-&gt;char</title><path fill="none" stroke="black" d="M295.31,-197.43C315.09,-215.82 348.71,-244.4 382.67,-261 402.99,-270.93 427.38,-277.51 447.47,-281.68"/><polygon fill="black" stroke="black" points="447.05,-285.16 457.53,-283.65 448.39,-278.29 447.05,-285.16"/></g><!-- Signed Integer --><g id="node4" class="node"><title>Signed Integer</title><ellipse fill="none" stroke="black" cx="487.96" cy="-234" rx="79.89" ry="18"/><text text-anchor="middle" x="487.96" y="-230.3" font-family="Times,serif" font-size="14.00">Signed Integer</text></g><!-- Integer Type&#45;&gt;Signed Integer --><g id="edge3" class="edge"><title>Integer Type-&gt;Signed Integer</title><path fill="none" stroke="black" d="M326.59,-192.66C355.84,-200.2 393.23,-209.84 424.56,-217.91"/><polygon fill="black" stroke="black" points="423.94,-221.37 434.49,-220.47 425.68,-214.59 423.94,-221.37"/></g><!-- Unsigned Integer --><g id="node5" class="node"><title>Unsigned Integer</title><ellipse fill="none" stroke="black" cx="487.96" cy="-180" rx="92.08" ry="18"/><text text-anchor="middle" x="487.96" y="-176.3" font-family="Times,serif" font-size="14.00">Unsigned Integer</text></g><!-- Integer Type&#45;&gt;Unsigned Integer --><g id="edge4" class="edge"><title>Integer Type-&gt;Unsigned Integer</title><path fill="none" stroke="black" d="M346.94,-180C359.25,-180 372.3,-180 385.29,-180"/><polygon fill="black" stroke="black" points="385.67,-183.5 395.67,-180 385.67,-176.5 385.67,-183.5"/></g><!-- Enumerated Integer --><g id="node6" class="node"><title>Enumerated Integer</title><ellipse fill="none" stroke="black" cx="487.96" cy="-126" rx="105.08" ry="18"/><text text-anchor="middle" x="487.96" y="-122.3" font-family="Times,serif" font-size="14.00">Enumerated Integer</text></g><!-- Integer Type&#45;&gt;Enumerated Integer --><g id="edge5" class="edge"><title>Integer Type-&gt;Enumerated Integer</title><path fill="none" stroke="black" d="M326.59,-167.34C354.08,-160.25 388.77,-151.31 418.85,-143.56"/><polygon fill="black" stroke="black" points="420.05,-146.86 428.86,-140.98 418.3,-140.09 420.05,-146.86"/></g><!-- Real Float --><g id="node8" class="node"><title>Real Float</title><ellipse fill="none" stroke="black" cx="487.96" cy="-72" rx="57.69" ry="18"/><text text-anchor="middle" x="487.96" y="-68.3" font-family="Times,serif" font-size="14.00">Real Float</text></g><!-- Float Type&#45;&gt;Real Float --><g id="edge7" class="edge"><title>Float Type-&gt;Real Float</title><path fill="none" stroke="black" d="M336.39,-72C362.36,-72 393.01,-72 419.85,-72"/><polygon fill="black" stroke="black" points="419.94,-75.5 429.94,-72 419.94,-68.5 419.94,-75.5"/></g><!-- Complex --><g id="node9" class="node"><title>Complex</title><ellipse fill="none" stroke="black" cx="487.96" cy="-18" rx="51.19" ry="18"/><text text-anchor="middle" x="487.96" y="-14.3" font-family="Times,serif" font-size="14.00">Complex</text></g><!-- Float Type&#45;&gt;Complex --><g id="edge8" class="edge"><title>Float Type-&gt;Complex</title><path fill="none" stroke="black" d="M322.42,-60.42C355.79,-51.81 401.35,-40.07 436.06,-31.12"/><polygon fill="black" stroke="black" points="437.19,-34.44 446,-28.56 435.45,-27.67 437.19,-34.44"/></g></g></svg></div></p>
+<blockquote>
+<p>C23 的新变化：</p>
+<ul>
+<li><code>_Bool</code> 提升为 <code>bool</code></li>
+<li>增加了指定位域个数整数类型 <code>_BitInt(N)</code> 与 <code>unsigned _BitInt(N)</code></li>
+<li>增加了三个十进制浮点类型 <code>_Decimal32</code>，<code>_Decimal64</code> 与 <code>_Decimal128</code></li>
+</ul>
+</blockquote>
+<h2 id="标准有符号整数类型"><a class="header" href="#标准有符号整数类型">标准有符号整数类型</a></h2>
+<p>包含 5 个：<code>signed char</code>，<code>short int</code>，<code>int</code>，<code>long int</code> 与 <code>long long int</code>。</p>
+<p>所有的 bits 可分为 3 个部分：<code>sign bits</code>，<code>value bits</code> 与 <code>padding bits</code>，但摆放位置由编译器确定。</p>
+<p>假设对于对象类型 <code>T</code> 有 <code>sign bits</code> 的个数加上 <code>value bits</code> 的个数为 \(N\)，则有下面的概念：</p>
+<ul>
+<li>宽度（Width）：\(N\)</li>
+<li>精度（Precision）：\(N-1\)</li>
+<li>对象值范围：\([-2^{N-1}, 2^{N-1}-1]\)</li>
+</ul>
+<h3 id="宽度定义"><a class="header" href="#宽度定义">宽度定义</a></h3>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center">类型</th><th style="text-align: center">宽度宏</th><th style="text-align: center">取值要求</th></tr></thead><tbody>
+<tr><td style="text-align: center"><code>signed char</code></td><td style="text-align: center"><code>SCHAR_WIDTH</code></td><td style="text-align: center"><code>CHAR_BIT</code></td></tr>
+<tr><td style="text-align: center"><code>short int</code></td><td style="text-align: center"><code>SHRT_WIDTH</code></td><td style="text-align: center">\(\geqslant 8\)</td></tr>
+<tr><td style="text-align: center"><code>int</code></td><td style="text-align: center"><code>INT_WIDTH</code></td><td style="text-align: center">\(\geqslant 16\)</td></tr>
+<tr><td style="text-align: center"><code>long int</code></td><td style="text-align: center"><code>LONG_WIDTH</code></td><td style="text-align: center">\(\geqslant 32\)</td></tr>
+<tr><td style="text-align: center"><code>long long int</code></td><td style="text-align: center"><code>LLONG_WIDTH</code></td><td style="text-align: center">\(\geqslant 64\)</td></tr>
+</tbody></table>
+</div>
+<ul>
+<li>书写类型表示值范围时，应使用诸如 <code>SCHAR_MIN</code> 与 <code>SCHAR_MAX</code> 的宏，而非直接书写数字。</li>
+<li><code>signed char</code> 类型不允许有 <code>padding bits</code>，因此 <code>sizeof(signed char)</code> 一定为 1；其他四种标准有符号整数类型没有明确规定 <code>padding bits</code>，但一般可以假设没有。</li>
+</ul>
+<blockquote>
+<p><code>typedef</code> 的用法：<code>typedef T alias</code>，为类型 <code>T</code> 设置别名。通过 <code>typedef</code> 可以提高程序的可移植性，比如：</p>
+<pre><code class="language-c">#ifdef ImplA
+    typedef short int INT16;
+    typedef int INT32;
+#elifdef ImplB
+    typedef int INT16;
+    typedef long int INT32;
+#endif
+</code></pre>
+</blockquote>
+<blockquote>
+<p>C23 中指定位域的类型 <code>_BitInt(N)</code>，指定有符号整数类型的宽度为 <code>N</code>，该类型的对象的对象值范围为 \([-2^{N-1}, 2^{N-1}-1]\).</p>
+<p>该类型可能会有 <code>padding bits</code>，个数为：<code>sizeof(_BitInt(N)) * CHAR_BIT - N</code>.</p>
+</blockquote>
+<h2 id="标准无符号整数类型"><a class="header" href="#标准无符号整数类型">标准无符号整数类型</a></h2>
+<p>除了五种标准有符号整数类型，还有一个 <code>bool</code> 类型（C23 以前为 <code>_Bool</code>）。</p>
+<p>对于标准无符号整数类型 <code>T</code> 的对象，bits 被分为两部分：<code>value bits</code> 与 <code>padding bits</code>，摆放位置同样由编译器确定。</p>
+<p>对象类型 <code>T</code> 的宽度 \(N\) 同样也是其精度，其对象的对象值范围为 \([0, 2^N-1]\).</p>
+<h3 id="宽度定义-1"><a class="header" href="#宽度定义-1">宽度定义</a></h3>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center">类型</th><th style="text-align: center">宽度宏</th><th style="text-align: center">取值要求</th></tr></thead><tbody>
+<tr><td style="text-align: center"><code>unsigned char</code></td><td style="text-align: center"><code>UCHAR_WIDTH</code></td><td style="text-align: center"><code>CHAR_BIT</code></td></tr>
+<tr><td style="text-align: center"><code>unsigned short int</code></td><td style="text-align: center"><code>USHRT_WIDTH</code></td><td style="text-align: center">\(\geqslant 8\)</td></tr>
+<tr><td style="text-align: center"><code>unsigned int</code></td><td style="text-align: center"><code>UINT_WIDTH</code></td><td style="text-align: center">\(\geqslant 16\)</td></tr>
+<tr><td style="text-align: center"><code>unsigned long int</code></td><td style="text-align: center"><code>ULONG_WIDTH</code></td><td style="text-align: center">\(\geqslant 32\)</td></tr>
+<tr><td style="text-align: center"><code>unsigned long long int</code></td><td style="text-align: center"><code>ULLONG_WIDTH</code></td><td style="text-align: center">\(\geqslant 64\)</td></tr>
+<tr><td style="text-align: center"><code>bool</code></td><td style="text-align: center"><code>BOOL_WIDTH</code></td><td style="text-align: center">\(1\)</td></tr>
+</tbody></table>
+</div>
+<ul>
+<li><code>bool</code> 类型宽度为 1，表征 <code>true</code> 和 <code>false</code> 两个值，但是其 <code>size</code> 由编译器决定，一定会有 <code>padding bits</code>，个数为：<code>sizeof(bool) * CHAR_BIT - 1</code>.</li>
+</ul>
+<h2 id="对齐要求"><a class="header" href="#对齐要求">对齐要求</a></h2>
+<p>对象的对齐要求一定是 \(2^n\) 的值，如 \(1,2,4,8,\cdots\)，值越小，称为<strong>对齐要求越弱</strong>（weak），反之则<strong>越强</strong>（strong）。</p>
+<p>标准规定，<code>signed char</code> 与 <code>unsigned char</code> 的对齐要求是最弱的，但不一定是 \(1\).</p>
+<h2 id="枚举类型"><a class="header" href="#枚举类型">枚举类型</a></h2>
+<p>枚举类型由程序员定义，实际的<strong>实现类型</strong>（<strong>Underlying Type</strong>）有两种方式确定：</p>
+<ul>
+<li>指定实现类型（Fixed Underlying Type）：
+<ul>
+<li>定义时指定：<code>enum Season : int {Spring, Summer, Autumn, Winter}</code></li>
+<li>自 C23 始可用</li>
+</ul>
+</li>
+<li>由编译器自动设置为下列 5 种整数类型之一：
+<ul>
+<li><code>char</code></li>
+<li>标准 {有 | 无} 符号整数类型</li>
+<li>扩展 {有 | 无} 符号整数类型</li>
+</ul>
+</li>
+</ul>
+<h2 id="char-类型"><a class="header" href="#char-类型"><code>char</code> 类型</a></h2>
+<p><code>char</code>、<code>signed char</code> 与 <code>unsigned char</code> 是<strong>三种不同的类型</strong>！它们统称为<strong>字符类型</strong>（Character Type）。</p>
+<p>编译器会指定 <code>char</code> 与其中一种行为一致。</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="派生类型数组类型"><a class="header" href="#派生类型数组类型">派生类型：数组类型</a></h1>
+<p><a href="https://www.bilibili.com/video/BV1pM4m117vb">@Bili: BV1pM4m117vb</a></p>
+<blockquote>
+<p>派生类型：由程序员构造出来的新类型。C 语言标准规定的派生类型有：<strong>数组类型</strong>、<strong>指针类型</strong>、<strong>结构体类型</strong>、<strong>联合体类型</strong>、<strong>原子类型</strong>以及<strong>函数类型</strong>。前五种是<strong>对象类型</strong>。</p>
+</blockquote>
+<h2 id="数组类型的定义"><a class="header" href="#数组类型的定义">数组类型的定义</a></h2>
+<p>假设一个<strong>完全对象类型</strong> <code>T</code>，以及元素的个数 <code>N</code>，数组类型可形式化定义为：<strong><code>T[N]</code></strong>，在标准中被称为 <strong>"Array of T"</strong>。</p>
+<p><code>N</code> 是一个<strong>表达式</strong>，有下面三种情况“</p>
+<ul>
+<li>如若没有 <code>N</code>，则 <code>T[]</code> 也是一个数组类型，但是<strong>不完全对象类型</strong>。</li>
+<li><code>N</code> 是一个<strong>整数常量</strong>或者<strong>整数常量表达式</strong>，则 <code>T[N]</code> 是普通数组类型。</li>
+<li>否则，<code>T[N]</code> 是一个<strong>变长数组（VLA）类型</strong>。</li>
+</ul>
+<p><code>sizeof(T[N]) == N * sizeof(T)</code>，<code>alignof(T[N]) == alignof(T)</code>。不完全对象类型 <code>T[]</code> 没有 size 或 alignment.</p>
+<pre><code class="language-c">// chapter_04/array_type.c
+
+// Error: clang(sizeof_alignof_incomplete_or_sizeless_type)
+// printf("int[]:\t\t%zd\t%zd\n", sizeof(int[]), alignof(int[]));
+
+printf("int[5]:\t\t%zd\t%zd\n", sizeof(int[5]), alignof(int[5]));
+printf("int[2+3]:\t%zd\t%zd\n", sizeof(int[2 + 3]), alignof(int[2 + 3]));
+
+const int N = 10;
+// int[N] 是一个变长数组类型！
+printf("int[N]:\t\t%zd\t%zd\n", sizeof(int[N]), alignof(int[N]));
+</code></pre>
+<h2 id="数组类型形式化表示"><a class="header" href="#数组类型形式化表示">数组类型形式化表示</a></h2>
+<pre><code class="language-c">typedef int AINT[5];
+</code></pre>
+<p>通过 <code>typedef</code> 为 <code>int[5]</code> 提供一个别名 <code>AINT</code>，后者是一个整体的 <code>T</code>.</p>
+<blockquote>
+<p><code>typedef int[5] AINT;</code> 是编译错误的，这是语法要求。可以使用 C23 关键词 <code>typeof</code> 进行（注：GNU 拓展也有这个关键词）：</p>
+<pre><code class="language-c">typedef typeof(int[5]) AINT;
+</code></pre>
+<p><code>typeof(int[5])</code> 与 <code>int[5]</code> 只是语法上的差异，在概念含义上没有区别。</p>
+</blockquote>
+<p>将 <code>int[5]</code> 视作 <code>T</code>，取 <code>N = 10</code>，则派生出来的类型为：<code>int[10][5]</code>。</p>
+<p>于是 <code>int[10][5]</code> 就等价于 <code>AINT[10]</code>（Array of <code>AINT</code>），C 语言所有的数组都是“一维”的。</p>
+<blockquote>
+<p>为什么不是 <code>int[5][10]</code>？因为 <code>T[N]</code> 会从左至右把第一个中括号删掉，剩下的是元素类型。</p>
+</blockquote>
+<pre><code class="language-c">// chapter_04/array_type.c
+printf("int[5][10]:\t\t%zd\t%zd\n", sizeof(int[5][10]), alignof(int[5][10]));
+typedef typeof(int[5]) INT_5_10[10];
+printf("typeof(int[5])[10]:\t%zd\t%zd\n", sizeof(INT_5_10), alignof(INT_5_10));
+</code></pre>
+<p>注意，<strong>不完全类型不可以派生</strong>，<code>int[10][]</code> 是不合法的。同样，<code>void</code> 由于也是一个不完全类型，<code>void[10]</code> 也是不合法的。</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="派生类型指针类型"><a class="header" href="#派生类型指针类型">派生类型：指针类型</a></h1>
+<p><a href="https://www.bilibili.com/video/BV171421t7NT">@Bili: BV171421t7NT</a></p>
+<h2 id="指针类型的定义"><a class="header" href="#指针类型的定义">指针类型的定义</a></h2>
+<p>指针类型可以形式化定义为 <code>T*</code>，被称为 <strong>"Pointer to T"</strong>，其中：</p>
+<ul>
+<li><code>T</code>：Reference Type，为对象类型或者函数类型。</li>
+<li><code>*</code>：摆放在合适位置，标志是一个指针类型。</li>
+</ul>
+<p>注意，这里的 <code>T</code> 可以是完全对象类型、不完全对象类型，也可以是函数类型。</p>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center">类型</th><th style="text-align: center">派生数组类型（<code>N</code> 个元素）</th><th style="text-align: center">派生指针类型</th></tr></thead><tbody>
+<tr><td style="text-align: center"><code>T</code></td><td style="text-align: center"><code>T[N]</code></td><td style="text-align: center"><code>T*</code></td></tr>
+<tr><td style="text-align: center"><code>T[M]</code></td><td style="text-align: center"><code>T[N][M]</code></td><td style="text-align: center"><code>T(*)[M]</code></td></tr>
+<tr><td style="text-align: center"><code>T*</code></td><td style="text-align: center"><code>T*[N]</code></td><td style="text-align: center"><code>T**</code></td></tr>
+</tbody></table>
+</div>
+<h2 id="复杂类型的识别"><a class="header" href="#复杂类型的识别">复杂类型的识别</a></h2>
+<p><code>()</code> <strong>优先级最高</strong>，且可能有嵌套，最先处理<strong>最内部的</strong> <code>()</code>；</p>
+<p>举例：<code>int*(**(*)[])[4][5]</code></p>
+<ol>
+<li>是指针类型，Reference Type 是 <code>int*(**[])[4][5]</code></li>
+<li>是数组类型，元素类型是 <code>int*(**)[4][5]</code>，不完全对象类型</li>
+<li>是指针类型，Reference Type 是 <code>int*(*)[4][5]</code></li>
+<li>是指针类型，Reference Type 是 <code>int*[4][5]</code></li>
+<li>是数组类型，元素类型是 <code>int*[5]</code>，元素个数为 <code>4</code></li>
+<li>是数组类型，元素类型是 <code>int*</code>，元素个数为 <code>5</code></li>
+<li>是指针类型，Reference Type 是 <code>int</code></li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="对象类型限定类型"><a class="header" href="#对象类型限定类型">对象类型：限定类型</a></h1>
+<p><a href="https://www.bilibili.com/video/BV1hS411w76B">@Bili: BV1hS411w76B</a></p>
+<p>C 语言中有四种<strong>限定符（Qualifier）</strong>。</p>
+<h2 id="原子限定类型-_atomict"><a class="header" href="#原子限定类型-_atomict">原子限定类型 <code>_Atomic(T)</code></a></h2>
+<p>给定一个类型 <code>T</code>，其原子限定类型为 <code>_Atomic(T)</code>，是一个合法的新类型，其对象的大小与缺省对齐要求为 <code>sizeof(_Atomic(T))</code> 与 <code>alignof(_Atomic(T))</code>。</p>
+<p><code>_Atomic(T)</code> 与 <code>T</code> 是两种不同的类型，大小、对齐要求以及相同对象值对应的对象表示不一定相同。</p>
+<blockquote>
+<p>原子类型也是一种<strong>派生类型</strong>，编译器可以选择不支持原子类型。</p>
+</blockquote>
+<h2 id="另外三种限定类型"><a class="header" href="#另外三种限定类型">另外三种限定类型</a></h2>
+<p>剩下三个限定符：<code>const</code>，<code>volatile</code> 与 <code>restrict</code>。</p>
+<p>给定类型 <code>T</code> 和上述三个之一的限定符 <code>Q</code>，则 <code>T</code> 的限定类型为 <code>T Q</code> 或 <code>Q T</code>，它们和 <code>T</code> 是<strong>不同的类型</strong>，但是<strong>大小、表示值与对齐方式一致</strong>。</p>
+<blockquote>
+<p><code>restrict</code> 只能限定<strong>对象指针类型</strong>，或者对象指针类型<strong>构成的多维数组类型</strong>。</p>
+</blockquote>
+<h2 id="typedef-提供的类型整体视角"><a class="header" href="#typedef-提供的类型整体视角"><code>typedef</code> 提供的类型整体视角</a></h2>
+<ul>
+<li>非数组非指针类型 <code>T</code>：<code>typedef T Alias;</code></li>
+<li>数组类型 <code>T[N]</code>：<code>typedef T Alias[N];</code></li>
+<li>指针类型 <code>T*</code>：<code>typedef T* Alias;</code></li>
+</ul>
+<blockquote>
+<p>复杂示例：</p>
+<ul>
+<li><code>int*[10]</code>：<code>typedef int* Alias[10];</code></li>
+<li><code>int(*)[10]</code>：<code>typedef int(* Alias)[10];</code></li>
+</ul>
+</blockquote>
+<p>在这种情况下，<code>Q Alias</code> 与 <code>Alias Q</code> 等价（视作整体）。</p>
+<h2 id="非整体视角下限定符在左右的区别"><a class="header" href="#非整体视角下限定符在左右的区别">非整体视角下，限定符在左右的区别</a></h2>
+<ol>
+<li>非数组非指针类型 <code>T</code>：<code>Q T === T Q</code></li>
+<li>数组类型 <code>T[N]</code>
+<ul>
+<li><code>Q T[N]</code>：数组类型，元素类型为 <code>Q T</code>，元素个数为 <code>N</code></li>
+<li><code>T[N] Q</code>：不合法</li>
+</ul>
+</li>
+<li>指针类型 <code>T*</code>：
+<ul>
+<li><code>Q T*</code>：指针类型，Reference Type 是 <code>Q T</code></li>
+<li><code>T* Q</code>：<code>Q</code> 限定了 <code>T*</code> 类型</li>
+</ul>
+</li>
+</ol>
+<pre><code class="language-c">// chapter_06/const_qualifier.c
+int num = 10;
+
+const int *cip = &amp;num; // pointer to `const int`
+// Error: clang(typecheck_assign_const)
+// *cip = 1;
+cip = &amp;num;
+// Error: clang(typecheck_assign_const)
+// *cip = 1;
+
+int *const ipc = &amp;num; // const qualify `int *`
+// Error: clang(typecheck_assign_const)
+// ipc = &amp;num;
+*ipc = 11;
+</code></pre>
+<blockquote>
+<p><code>Q typeof(T[N])</code> 等价于 <code>Q typeof(T)[N]</code>，<strong>与 <code>Q T[N]</code> 有区别！</strong></p>
+<p><code>const typeof(int*[10])</code> 等价于 <code>const typeof(int*)[10]</code>，而 <code>const typeof(int*)</code> 等价于 <code>int *const</code>，因此原类型等价于 <code>int* const[10]</code>，而非 <code>const int*[10]</code>。</p>
+</blockquote>
+<h2 id="多个限定符的语义"><a class="header" href="#多个限定符的语义">多个限定符的语义</a></h2>
+<p><code>const volatile int</code> 与 <code>volatile const int</code> 等价。</p>
+<p>C23 提供新关键词 <code>typeof_unqual(T)</code> 获取 <code>T</code> 类型的非限定类型，<code>typeof_unqual(const volatile int)</code> 等价于 <code>int</code>。</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+        <script>
+        window.addEventListener('load', function() {
+            MathJax.Hub.Register.StartupHook('End', function() {
+                window.setTimeout(window.print, 100);
+            });
+        });
+        </script>
+
+    </div>
+    </body>
+</html>
