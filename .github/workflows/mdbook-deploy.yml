@@ -15,10 +15,7 @@ jobs:
         uses: peaceiris/actions-mdbook@v2
         with:
           mdbook-version: 'latest'
-      - name: Install graphviz
-        uses: actions/apt-get-install-action@v2
-        with:
-          pkg: graphviz
+      - run: sudo apt update && sudo apt install -y graphviz
       - run: cargo install mdbook-graphviz
       - run: mdbook build
 
